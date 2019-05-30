@@ -1,0 +1,13 @@
+---
+title: "Archivo de prueba"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Este es un archivo de prueba para probar la colaboración en github.
+
+Firmas:
+
