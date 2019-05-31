@@ -1,6 +1,6 @@
 # Proyecto_STAT_NT2019
 
-## Grupo:
+## Grupo
 
 Santiago Burgoa
 
@@ -16,3 +16,16 @@ Mas información (extraída de la fuente) :
 "Los datos se organizan bajo la forma de panel e incluyen la información relevada en las dos olas realizadas de la encuesta. Las mismas fueron realizadas en 2010 y 2013.
 
 La realización de la encuesta contó con el apoyo y financiamiento del Instituto Nacional de Cooperativismo (INACOOP) y de la Agencia Nacional de Investigación e Innovación."
+
+## Variables
+
+Algunas variables de interés:
+
+-Número de forulario (id)
+-Año de la encuesta
+-Tipo de empresa (cooperativa de producción o empresa convencional)
+-Personal ocupado promedialmente
+-Distribución de socios según categoría de ocupación (esta variable es posteriormente dividida según genero y edad)
+-Distribución de asalariados según categoría de ocupación
+-Salario nominal promedio según categoría
+-Edificios, construcciones y terrenos (estimación del capital)
