@@ -45,6 +45,18 @@ Salarios <- datos %>%
 
 ```
 
+#Introducción
+
+Listado de variables:
+-Número de formulario
+-Año de la encuesta
+-Tipo de empresa
+-Cargo del informante
+
+
+
+
+
 Preguntas: 
 Cómo afecta los reportes sobre performance (ausentismo, gestion, etc) el rol del informante?
 
