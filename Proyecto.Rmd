@@ -45,5 +45,11 @@ inversion<-ordenados%>%
 
 ```
 
+```{r}
+Salarios <- datos %>% 
+  select(form, año, c31asal:c36rs) %>% 
+  rename("Sp. Gerentes/Directores(E)" = c31asal, "Tipo"=c31ra, "Sp. Gerentes/Directores(S)"=c31soc)
+
+```
 
 
