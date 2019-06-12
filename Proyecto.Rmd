@@ -17,39 +17,35 @@ library(haven)
 datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
-datos_m <- datos %>% select(form, año, cp, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"))
 
-ordenados <- datos%>%
-  select(form, año, f21:otrosg3)
+gen_ocup <- datos %>% select(form, año, cp, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"))
 
-problemas <- ordenados %>%
-  select(form, año,f21, f22, f23, otrof2a, f2bfaltade)%>%
-  rename("primera"=f21, "segunda"=f22, "tercera"=f23, "otro"=otrof2a, "falta de motivación"=f2bfaltade)
+#Datos sobre: supervisión y conflicto: gestion, ausentismo
 
-ausentismo <- ordenados%>%
-  select(f3, f3b1, f3b2, f3b3, otrof3b)%>%
-  rename("¿hay ausentismo?"=f3, "primera"=f3b1, "segunda"=f3b2, "tercera"=f3b3, "otro"=otrof3b)
+sup_conf <- datos %>%
+  select(form, año, f21, f22, f23, f3, f3b1, f3b2, f3b3, f4bactitud, f4ccalidad)
 
-tecno<-ordenados%>%
-  select(form, año, g11, g21)%>%
-  rename("tecno1"=g11, "tecno2"=g21)
-gather(tecno, aspecto, calidad, tecno1, tecno2)
+  
+#Datos sobre: tecnologia e innovación
 
-produccion<-ordenados%>%
-  select(form, año,g12, g22)%>%
-  rename("prod1"=g12, "prod2"=g22)
-gather(produccion, aspecto, cantidad, prod1, prod2)
+tecno <- datos %>%
+  select(form, año, g11:g31, g31:g31resul, g4proc:g424intern, g41a, g41b, g43a:g44b)
+  
+#Opiniones del entrevistado
 
-inversion<-ordenados%>%
-  select(form, año, g31, g31inv, g31resul, g32, g32inv, g32resul, g33, g33inv, g33resul, g36, g36inv, g36resul, g37, g37inv, g37resul, g38, g38inv, g38resul, g39, g39inv, g39resul)
-
+opinion <- datos %>%
+  select(form, año, h1posturaa, h5pacienci, h84educaci, h89sexo)
 ```
 
 ```{r}
+#Remuneraciones
 Salarios <- datos %>% 
   select(form, año, c31asal:c36rs) %>% 
   rename("Sp. Gerentes/Directores(E)" = c31asal, "Tipo"=c31ra, "Sp. Gerentes/Directores(S)"=c31soc)
 
 ```
 
+Preguntas: 
+Cómo afecta los reportes sobre performance (ausentismo, gestion, etc) el rol del informante?
 
+Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
