@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-```{r}
+```{r, include = FALSE}
 library(tidyverse)
 library(haven)
 
@@ -45,19 +45,35 @@ Salarios <- datos %>%
 
 ```
 
-#Introducción
+# Introducción
 
-Listado de variables:
--Número de formulario
--Año de la encuesta
--Tipo de empresa
--Cargo del informante
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción [^1], llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010-2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores y empresas convencionales en Uruguay. Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen.
+El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica.
+Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos . Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. 
 
 
 
+[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/]
 
 
-Preguntas: 
-Cómo afecta los reportes sobre performance (ausentismo, gestion, etc) el rol del informante?
 
-Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+
+
+```{r}
+
+#Listado de variables:
+#-Número de formulario
+#-Año de la encuesta
+#-Tipo de empresa
+#-Cargo del informante
+
+
+
+
+
+#Preguntas: 
+#Cómo afecta los reportes sobre performance (ausentismo, gestion, etc) el rol del informante?
+
+#Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+
+```
