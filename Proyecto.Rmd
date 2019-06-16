@@ -29,7 +29,7 @@ sup_conf <- datos %>%
 #Datos sobre: tecnologia e innovación
 
 tecno <- datos %>%
-  select(form, año, g11:g31, g31:g31resul, g4proc:g424intern, g41a, g41b, g43a:g44b)
+  select(form, año, g11:g31, g31:g31resul, g4proc:g422emp, g41a, g41b, g43a:g44b)
   
 #Opiniones del entrevistado
 
@@ -57,23 +57,64 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 
 
 
+# Datos
+ Listado inicial de variables:
+-Número de formulario
+-Año de la encuesta
+-Tipo de empresa
+-Cargo del informante
+-Fecha de inicio de actividades 
+-Número de cooperativas que figuran como sus proveedores 
+-Número de cooperativas que figuran como sus socios
+-Número de cooperativas que figuran como sus clientes
+-Personal ocupado promedialmente
+-Distribución de socios según categoría de ocupación, género y edad
+-Distribución de asalariados según categoría de ocupación, género y edad
+-Distribución de socios según máximo nivel educativo alcanzado
+-Distribución de socios según nivel educativo alcanzado (2012)
+-Distribución de socios según nivel educativo alcanzado (2012)
 
+
+
+-Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
+-¿Es el ausentismo un problema en la cooperativa?
+-Principales razones que explican el ausentismo (primer mencion¿)
+-¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
+-¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
+-En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
+-En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
+-En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a marketing y comercialización
+-En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacitación de personal
+-En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a maquinaria y equipos
+-¿La empresa ha desarrollado en los últimos tres años alguna de las siguientes actividades en procura de lograr mejoras de producto, de proceso, de organización y/o de comercialización? 
+-Monto de la inversión
+-Resultado de la inversión
+-¿Hubo innovaciones en producto orientadas al mercado? 
+-¿Los resultados de esa innovación fueron novedosos para la empresa?
+-¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo? 
+-¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo de forma extendida? 
+-¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo? 
+-¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
+-¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
+-En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
+-Nivel educativo de el/la encuestado/a 
+-Sexo de el/la entrevistado/a
+
+# Análisis exploratorio
+
+## Preguntas: 
+Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
+
+Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
 
 ```{r}
 
-#Listado de variables:
-#-Número de formulario
-#-Año de la encuesta
-#-Tipo de empresa
-#-Cargo del informante
 
 
 
 
 
-#Preguntas: 
-#Cómo afecta los reportes sobre performance (ausentismo, gestion, etc) el rol del informante?
 
-#Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+
 
 ```
