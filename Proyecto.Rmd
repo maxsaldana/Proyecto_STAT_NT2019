@@ -97,16 +97,33 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 -¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
 -¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
 -En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
--Nivel educativo de el/la encuestado/a 
--Sexo de el/la entrevistado/a
+-Nivel educativo de los encuestados 
+-Sexo de los entrevistados
 
 # Análisis exploratorio
 
 ## Preguntas: 
-Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
+1. Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
 
-Características autorreportadas por las personas (paciencia, aversión al riesgo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+2. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
 
+3. Tendencia a la innovación según la antiguedad de la cooperativa
+
+4. Distribuciones de la colaboración con otras cooperativas (socios, clientes, proveedores)
+
+5. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
+
+6. Diferencias entre las cooperativas en cuanto a sus problemas según distintas variables (ej : inversión en innovación)
+
+7. Como afecta la educación de los socios al desempeño de la cooperativa en los aspectos preguntados
+
+8. Descripción de los encuestados
+ 
+9. Proporción de cooperativas que usan la rotación de tareas y el trabajo en equipo (y de forma extendida) 
+
+10. Relación entre monto de la inversión y el resultado
+
+11. Ausentismo según características de los socios
 ```{r}
 
 
