@@ -18,7 +18,7 @@ datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
 
-gen_ocup <- datos %>% select(form, año, cp, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"))
+gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"))
 
 #Datos sobre: supervisión y conflicto: gestion, ausentismo
 
@@ -103,14 +103,58 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 # Análisis exploratorio
 
 ## Preguntas: 
+
 1. Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
 
 2. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
 
-4. Distribuciones de la colaboración con otras cooperativas (socios, clientes, proveedores)
+### 4. Distribuciones de la colaboración con otras cooperativas (socios, clientes, proveedores)
 
+Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo.
+
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores. Dividido en cooperativas de producción (CP) y cooperatvias de trabajo (CT)"}
+
+#Se podria hacer reactivo en shiny
+
+gen_ocup %>%
+  mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
+  filter(a11a1 < 500) %>% #Hay un outlier que afecta la grafica
+  ggplot() + 
+  geom_bar(aes(x = a11a1)) +
+  facet_wrap(vars(tipo_coop)) +
+  labs(x = "Número de cooperativas proveedoras", y = "Frecuencia entre las cooperativas encuestadas")
+```
+
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
+
+#Se podria hacer reactivo en shiny
+#Conviene hacerlo en proporciones, sacar el 0 o algo para presentarlo mejor? 
+
+
+gen_ocup %>%
+  mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
+  filter(a11a2 < 500) %>% #Hay un outlier que afecta la grafica
+  ggplot() + 
+  geom_bar(aes(x = a11a2)) +
+  facet_wrap(vars(tipo_coop)) +
+  labs(x = "Número de cooperativas socias", y = "Frecuencia entre las cooperativas encuestadas")
+
+```
+
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus clientes. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
+
+#Se podria hacer reactivo en shiny
+
+gen_ocup %>%
+  mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
+  filter(a11a3 < 500) %>% #Hay un outlier que afecta la grafica
+  ggplot() + 
+  geom_bar(aes(x = a11a3)) +
+  facet_wrap(vars(tipo_coop)) +
+  labs(x = "Número de cooperativas clientes", y = "Frecuencia entre las cooperativas encuestadas")
+```
 5. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
 
 6. Diferencias entre las cooperativas en cuanto a sus problemas según distintas variables (ej : inversión en innovación)
@@ -124,8 +168,9 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 10. Relación entre monto de la inversión y el resultado
 
 11. Ausentismo según características de los socios
-```{r}
 
+
+```{r}
 
 
 
