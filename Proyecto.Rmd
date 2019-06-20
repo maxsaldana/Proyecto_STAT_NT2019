@@ -6,13 +6,17 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt')
 ```
 
 
 ```{r, include = FALSE}
+### PREPARACIÓN DE LOS DATOS ###
+
 library(tidyverse)
 library(haven)
+library(xtable)
+library(lubridate)
 
 datos <- read_dta("Datos/2011_2013panel.dta")
 
@@ -47,74 +51,161 @@ Salarios <- datos %>%
 
 # Introducción
 
-La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción [^1], llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010-2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores y empresas convencionales en Uruguay. Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen.
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción [^1], llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010'2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores y empresas convencionales en Uruguay. Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen.
 El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica.
-Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos . Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. 
+Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos . Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. Agradecemos la información adicional sobre la encuesta suministrada por Andrés Dean.
 
 
 
-[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/]
+[^1]: http://www.iecon.ccee.edu.uy/bases*de*datos/contenido/300/es/
 
 
 
 # Datos
- Listado inicial de variables:
--Número de formulario
--Año de la encuesta
--Tipo de empresa
--Cargo del informante
--Fecha de inicio de actividades 
--Número de cooperativas que figuran como sus proveedores 
--Número de cooperativas que figuran como sus socios
--Número de cooperativas que figuran como sus clientes
--Personal ocupado promedialmente
--Distribución de socios según categoría de ocupación, género y edad
--Distribución de asalariados según categoría de ocupación, género y edad
--Distribución de socios según máximo nivel educativo alcanzado
--Distribución de socios según nivel educativo alcanzado (2012)
--Distribución de socios según nivel educativo alcanzado (2012)
+
+## Listado inicial de variables:
+
+* Número de formulario
+* Año de la encuesta
+* Tipo de empresa
+* Cargo del informante
+* Fecha de inicio de actividades 
+* Número de cooperativas que figuran como sus proveedores 
+* Número de cooperativas que figuran como sus socios
+* Número de cooperativas que figuran como sus clientes
+* Personal ocupado promedialmente
+* Distribución de socios según categoría de ocupación, género y edad
+* Distribución de asalariados según categoría de ocupación, género y edad
+* Distribución de socios según máximo nivel educativo alcanzado
+* Distribución de socios según nivel educativo alcanzado (2012)
+* Distribución de socios según nivel educativo alcanzado (2012)
 
 
 
--Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
--¿Es el ausentismo un problema en la cooperativa?
--Principales razones que explican el ausentismo (primer mencion¿)
--¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
--¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
--En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
--En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
--En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a marketing y comercialización
--En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacitación de personal
--En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a maquinaria y equipos
--¿La empresa ha desarrollado en los últimos tres años alguna de las siguientes actividades en procura de lograr mejoras de producto, de proceso, de organización y/o de comercialización? 
--Monto de la inversión
--Resultado de la inversión
--¿Hubo innovaciones en producto orientadas al mercado? 
--¿Los resultados de esa innovación fueron novedosos para la empresa?
--¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo? 
--¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo de forma extendida? 
--¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo? 
--¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
--¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
--En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
--Nivel educativo de los encuestados 
--Sexo de los entrevistados
+* Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
+* ¿Es el ausentismo un problema en la cooperativa?
+* Principales razones que explican el ausentismo (primer mencion¿)
+* ¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
+* ¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a marketing y comercialización
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacitación de personal
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a maquinaria y equipos
+* ¿La empresa ha desarrollado en los últimos tres años alguna de las siguientes actividades en procura de lograr mejoras de producto, de proceso, de organización y/o de comercialización? 
+* Monto de la inversión
+* Resultado de la inversión
+* ¿Hubo innovaciones en producto orientadas al mercado? 
+* ¿Los resultados de esa innovación fueron novedosos para la empresa?
+* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo? 
+* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo de forma extendida? 
+* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo? 
+* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
+* ¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
+* En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
+* Nivel educativo de los encuestados 
+* Sexo de los entrevistados
+
 
 # Análisis exploratorio
 
-## Preguntas: 
+## Preguntas guía: 
 
-1. Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
+1. Descripción de los encuestados
 
-2. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+```{r, fig.cap = "Gráfico de barras, cantidad de encuestados de cada sexo."}
+opinion %>%
+  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
+  ggplot() +
+  geom_bar(aes(as.factor(h89sexo))) +
+  labs(x = "Sexo", y = "Frecuencia") +
+  scale_x_discrete(labels = c("Masculino", "Femenino") )
+```
+
+```{r, results = "asis"}
+opinion %>%
+  mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
+  filter(is.na(h89sexo) == FALSE) %>%
+  group_by(h89sexo) %>%
+  summarise(Cantidad = n()) %>%
+  mutate(Proporción = prop.table(Cantidad)) %>%
+  rename(Sexo = h89sexo) %>%
+  xtable() %>%
+  print(comment = FALSE)
+
+```
+En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
+
+```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados según sexo"}
+opinion %>%
+  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
+  ggplot() +
+  geom_bar(aes(as.factor(h84educaci), fill = as.factor(h89sexo))) +
+  scale_fill_discrete(labels = c("Masculino", "Femenino")) +
+  scale_x_discrete(labels = c("Primaria", "Secundaria incompleta", "Secundaria", "Terciaria/Universitaria incompleta", "Terciaria/Universitaria")) +
+  coord_flip() +
+  labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
+```
+Se puede distinguir claramente que la mayoría de los encuestados de ambos sexo posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. En el caso de los hombres los grupos con educación terciaria/universitaria incompleta, secundaria y secundaria incompleta presentan un número de personas similar, mientras que en el caso de las mujeres el grupo secundaria tiene un número mayor de personas. 
+
+2. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
+
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
 
-### 4. Distribuciones de la colaboración con otras cooperativas (socios, clientes, proveedores)
+La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente tendrá una tendencia a innovar más para destacarse más, ya que no puede usar la legitimidad que da el tiempo activos como atractivo.   
 
-Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo.
+```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
+# Los siguientes chunks pueden ser aplicables a shiny
 
-```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores. Dividido en cooperativas de producción (CP) y cooperatvias de trabajo (CT)"}
+inno_arr <- datos %>%
+  select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
+  mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
+  filter(a4 > "1800-01-01" & a4 < "2013-01-01", is.na(g4prod) == FALSE, is.na(g4proc) == FALSE, is.na(g4org) == FALSE, is.na(g4com) == FALSE, cp == 1)
+
+ggplot(inno_arr) +
+  geom_bar(aes(year(a4), fill = as.factor(g4prod)), position = "fill") +
+  scale_fill_discrete(labels = c("Si", "No" )) +
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en producto?")
+
+# La cantidad de observaciones puede estar afectando
+```
+
+```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
+
+ggplot(inno_arr) +
+  geom_bar(aes(year(a4), fill = as.factor(g4proc)), position = "fill") +
+  scale_fill_discrete(labels = c("Si", "No" )) +
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en proceso?")
+
+```
+
+```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
+
+ggplot(inno_arr) +
+  geom_bar(aes(year(a4), fill = as.factor(g4org)), position = "fill") +
+  scale_fill_discrete(labels = c("Si", "No" )) +
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en organización?")
+
+```
+
+```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
+
+ggplot(inno_arr) +
+  geom_bar(aes(year(a4), fill = as.factor(g4com)), position = "fill") +
+  scale_fill_discrete(labels = c("Si", "No" )) +
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en comercialización?")
+
+```
+
+
+El único patrón discernible es en el caso de la organización de las empresas. Aquellas cuyas actividades iniciaron previamente a mediados de los años ochenta no parecen presentar innovación en organización en los 3 años anteriores a la encuesta. En el resto de las áreas no parece haber una tendencia clara de como afecta la antigüedad de las empresas en su tendencia a innovar.
+
+4.  ¿Colaboran más las cooperativas entre sí que las empresas con ellas? 
+
+Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. La colaboración preguntada en la entrevista es en la forma de socios, proveedores y clientes.
+
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
 
 #Se podria hacer reactivo en shiny
 
@@ -155,46 +246,14 @@ gen_ocup %>%
   facet_wrap(vars(tipo_coop)) +
   labs(x = "Número de cooperativas clientes", y = "Frecuencia entre las cooperativas encuestadas")
 ```
-5. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
+
+5. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
 
 6. Diferencias entre las cooperativas en cuanto a sus problemas según distintas variables (ej : inversión en innovación)
 
 7. Como afecta la educación de los socios al desempeño de la cooperativa en los aspectos preguntados
 
-8. Descripción de los encuestados
-
-```{r, fig.cap = "Gráfico de barras, cantidad de encuestados de cada sexo."}
-opinion %>%
-  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
-  ggplot() +
-  geom_bar(aes(as.factor(h89sexo))) +
-  labs(x = "Sexo", y = "Frecuencia") +
-  scale_x_discrete(labels = c("Masculino", "Femenino") )
-```
-
-```{r, results = "asis"}
-opinion %>%
-  mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
-  filter(is.na(h89sexo) == FALSE) %>%
-  group_by(h89sexo) %>%
-  summarise(Cantidad = n()) %>%
-  mutate(Proporción = prop.table(Cantidad)) %>%
-  xtable()
-
-```
-En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
-
-```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados según sexo"}
-opinion %>%
-  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
-  ggplot() +
-  geom_bar(aes(as.factor(h84educaci), fill = as.factor(h89sexo))) +
-  scale_fill_discrete(labels = c("Masculino", "Femenino")) +
-  scale_x_discrete(labels = c("Primaria", "Secundaria incompleta", "Secundaria", "Terciaria/Universitaria incompleta", "Terciaria/Universitaria")) +
-  coord_flip() +
-  labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
-```
-Se puede distinguir claramente que la mayoría de los encuestados de ambos sexo posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. En el caso de los hombres los grupos con educación terciaria/universitaria incompleta, secundaria y secundaria incompleta presentan un número de personas similar, mientras que en el caso de las mujeres el grupo secundaria tiene un número mayor de personas.  
+8. Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante? 
 
 9. Proporción de cooperativas que usan la rotación de tareas y el trabajo en equipo (y de forma extendida) 
 
