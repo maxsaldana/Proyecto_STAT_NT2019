@@ -162,7 +162,40 @@ gen_ocup %>%
 7. Como afecta la educación de los socios al desempeño de la cooperativa en los aspectos preguntados
 
 8. Descripción de los encuestados
- 
+
+```{r, fig.cap = "Gráfico de barras, cantidad de encuestados de cada sexo."}
+opinion %>%
+  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
+  ggplot() +
+  geom_bar(aes(as.factor(h89sexo))) +
+  labs(x = "Sexo", y = "Frecuencia") +
+  scale_x_discrete(labels = c("Masculino", "Femenino") )
+```
+
+```{r, results = "asis"}
+opinion %>%
+  mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
+  filter(is.na(h89sexo) == FALSE) %>%
+  group_by(h89sexo) %>%
+  summarise(Cantidad = n()) %>%
+  mutate(Proporción = prop.table(Cantidad)) %>%
+  xtable()
+
+```
+En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
+
+```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados según sexo"}
+opinion %>%
+  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
+  ggplot() +
+  geom_bar(aes(as.factor(h84educaci), fill = as.factor(h89sexo))) +
+  scale_fill_discrete(labels = c("Masculino", "Femenino")) +
+  scale_x_discrete(labels = c("Primaria", "Secundaria incompleta", "Secundaria", "Terciaria/Universitaria incompleta", "Terciaria/Universitaria")) +
+  coord_flip() +
+  labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
+```
+Se puede distinguir claramente que la mayoría de los encuestados de ambos sexo posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. En el caso de los hombres los grupos con educación terciaria/universitaria incompleta, secundaria y secundaria incompleta presentan un número de personas similar, mientras que en el caso de las mujeres el grupo secundaria tiene un número mayor de personas.  
+
 9. Proporción de cooperativas que usan la rotación de tareas y el trabajo en equipo (y de forma extendida) 
 
 10. Relación entre monto de la inversión y el resultado
