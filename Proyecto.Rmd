@@ -51,17 +51,27 @@ Salarios <- datos %>%
 
 # Introducción
 
-La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción [^1], llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010'2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores y empresas convencionales en Uruguay. Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen.
-El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica.
-Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos . Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. Agradecemos la información adicional sobre la encuesta suministrada por Andrés Dean.
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010'2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. 
+
+Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica. 
+
+
+Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos. Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. Agradecemos la información adicional sobre la encuesta suministrada por Andrés Dean.
 
 
 
-[^1]: http://www.iecon.ccee.edu.uy/bases*de*datos/contenido/300/es/
+
 
 
 
 # Datos
+
+La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción. [^1] Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
+
+
+Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad)  
+
+[^1]: http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/
 
 ## Listado inicial de variables:
 
