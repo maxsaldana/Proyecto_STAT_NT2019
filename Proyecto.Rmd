@@ -39,13 +39,31 @@ tecno <- datos %>%
 
 opinion <- datos %>%
   select(form, año, h1posturaa, h5pacienci, h84educaci, h89sexo)
-```
 
-```{r}
-#Remuneraciones
+##Remuneraciones
+
+#Salarios nominlaes promedio por categoria
 Salarios <- datos %>% 
-  select(form, año, c31asal:c36rs) %>% 
-  rename("Sp. Gerentes/Directores(E)" = c31asal, "Tipo"=c31ra, "Sp. Gerentes/Directores(S)"=c31soc)
+  select(form, año, c31asal:c36rs) 
+
+##Inversion y financiamiento
+
+EdiCons <- datos %>%
+  select(Capital=d11capcap, Gastos= d11invgasg, Ingresos=d11invingi, Inversiones=d11invinv, Activo=d11actact)
+
+TotAct <- datos %>%
+  select(d16captot:d16acttot)
+
+TotPas <- datos %>%
+  select(d2tot)
+
+
+#Trabajadores que ingresaron y dejaron la cooperativa por edad.
+TraIng <- datos %>%
+  select(b18a35soc:b18atot)
+
+TraDej <- datos %>%
+  select(b14a35soc:b14atot)
 
 ```
 
