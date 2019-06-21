@@ -292,16 +292,22 @@ gen_ocup %>%
 
 10. Relación entre monto de la inversión y el resultado
 
+
+```{r}
+datos %>%
+  select(form, año, g31:g31resul) %>%
+  rename("invierte"= g31, "monto"= g31inv, "resultado"= g31resul) %>%
+  mutate(resultado= recode(resultado, `1` = "Muy malo", `2` = "Malo", `3` = "Nulo", `4` = "Bueno", `5` = "Muy bueno")) %>%
+  ggplot() +
+  geom_boxplot(aes(x= resultado, y= monto))
+
+
+
+```
+
 11. Ausentismo según características de los socios
 
 
 ```{r}
-
-
-
-
-
-
-
 
 ```
