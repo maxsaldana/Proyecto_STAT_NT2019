@@ -42,7 +42,7 @@ opinion <- datos %>%
 
 ##Remuneraciones
 
-#Salarios nominlaes promedio por categoria
+#Salarios nominales promedio por categoria
 Salarios <- datos %>% 
   select(form, año, c31asal:c36rs) 
 
@@ -78,61 +78,16 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 
 
 
-
-
-
-
 # Datos
 
 La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción. [^1] Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
 
 
-Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad)  
+Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad). En el anexo está disponible el listado de todas las variables que inicialmente seleccionamos de la base de datos.
 
 [^1]: http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/
 
-## Listado inicial de variables:
 
-* Número de formulario
-* Año de la encuesta
-* Tipo de empresa
-* Cargo del informante
-* Fecha de inicio de actividades 
-* Número de cooperativas que figuran como sus proveedores 
-* Número de cooperativas que figuran como sus socios
-* Número de cooperativas que figuran como sus clientes
-* Personal ocupado promedialmente
-* Distribución de socios según categoría de ocupación, género y edad
-* Distribución de asalariados según categoría de ocupación, género y edad
-* Distribución de socios según máximo nivel educativo alcanzado
-* Distribución de socios según nivel educativo alcanzado (2012)
-* Distribución de socios según nivel educativo alcanzado (2012)
-
-
-
-* Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
-* ¿Es el ausentismo un problema en la cooperativa?
-* Principales razones que explican el ausentismo (primer mencion¿)
-* ¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
-* ¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
-* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
-* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
-* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a marketing y comercialización
-* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacitación de personal
-* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a maquinaria y equipos
-* ¿La empresa ha desarrollado en los últimos tres años alguna de las siguientes actividades en procura de lograr mejoras de producto, de proceso, de organización y/o de comercialización? 
-* Monto de la inversión
-* Resultado de la inversión
-* ¿Hubo innovaciones en producto orientadas al mercado? 
-* ¿Los resultados de esa innovación fueron novedosos para la empresa?
-* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo? 
-* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo de forma extendida? 
-* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo? 
-* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
-* ¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
-* En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
-* Nivel educativo de los encuestados 
-* Sexo de los entrevistados
 
 
 # Análisis exploratorio
@@ -150,6 +105,7 @@ opinion %>%
   scale_x_discrete(labels = c("Masculino", "Femenino") )
 ```
 
+
 ```{r, results = "asis"}
 opinion %>%
   mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
@@ -163,9 +119,12 @@ opinion %>%
 
 #/Sexpr{"objeto"}
 ```
+
 En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
 
 ```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados según sexo"}
+#Apilar?
+
 opinion %>%
   filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
   ggplot() +
@@ -193,15 +152,42 @@ TraDej %>%
 
 La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente tendrá una tendencia a innovar más para destacarse más, ya que no puede usar la legitimidad que da el tiempo activos como atractivo.   
 
+```{r, fig.cap = "Serie de tiempo, cantidad de empresas fundadas cada año"}
+inno_arr <- datos %>%
+  select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
+  mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
+  filter(a4 > "1800-01-01" & a4 < "2013-01-01", is.na(g4prod) == FALSE, is.na(g4proc) == FALSE, is.na(g4org) == FALSE, is.na(g4com) == FALSE, cp == 1)
+
+inno_arr %>%
+  mutate(a4 = year(a4)) %>%
+  group_by(a4) %>%
+  summarise(n = n()) %>%
+  ggplot() +
+  geom_line(aes(x = a4, y = n), color = "green") +
+  labs(x = "Año", y = "Cooperativas fundadas")
+```
+A la hora del análisis tenemos que tener en cuenta que hay años donde se fundó una sola cooperativa, por lo que la tendencia a la innovación va a depender de esa sola cooperativa.
+
+```{r}
+inno_arr %>%
+  gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
+  mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No")) %>%
+  filter(hubo != "No") %>%
+  group_by(a4, tipo) %>%
+  summarise(n = n()) %>%
+  mutate(prop = n/sum(n)) %>%
+  ggplot() +
+  geom_tile(aes(x = a4, y = tipo, fill = n))
+  
+
+```
+
 ```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
 # Los siguientes chunks pueden ser aplicables a shiny
 #añadir serie de tiempo de fundacion y comentar esto segun eso
 #ver si hay que separar por rama
 #heatmap por rama de innovacion
-inno_arr <- datos %>%
-  select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
-  mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
-  filter(a4 > "1800-01-01" & a4 < "2013-01-01", is.na(g4prod) == FALSE, is.na(g4proc) == FALSE, is.na(g4org) == FALSE, is.na(g4com) == FALSE, cp == 1)
+
 
 ggplot(inno_arr) +
   geom_bar(aes(year(a4), fill = as.factor(g4prod)), position = "fill") +
@@ -320,3 +306,50 @@ datos %>%
 ```{r}
 
 ```
+
+
+
+# Anexo
+
+## 1. Listado inicial de variables:
+
+* Número de formulario
+* Año de la encuesta
+* Tipo de empresa
+* Cargo del informante
+* Fecha de inicio de actividades 
+* Número de cooperativas que figuran como sus proveedores 
+* Número de cooperativas que figuran como sus socios
+* Número de cooperativas que figuran como sus clientes
+* Personal ocupado promedialmente
+* Distribución de socios según categoría de ocupación, género y edad
+* Distribución de asalariados según categoría de ocupación, género y edad
+* Distribución de socios según máximo nivel educativo alcanzado
+* Distribución de socios según nivel educativo alcanzado (2012)
+* Distribución de socios según nivel educativo alcanzado (2012)
+
+
+
+* Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
+* ¿Es el ausentismo un problema en la cooperativa?
+* Principales razones que explican el ausentismo (primer mencion¿)
+* ¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
+* ¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a marketing y comercialización
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacitación de personal
+* En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a maquinaria y equipos
+* ¿La empresa ha desarrollado en los últimos tres años alguna de las siguientes actividades en procura de lograr mejoras de producto, de proceso, de organización y/o de comercialización? 
+* Monto de la inversión
+* Resultado de la inversión
+* ¿Hubo innovaciones en producto orientadas al mercado? 
+* ¿Los resultados de esa innovación fueron novedosos para la empresa?
+* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo? 
+* ¿Podría indicar si la empresa ha utilizado Trabajo en equipo como forma de organzación del trabajo de forma extendida? 
+* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo? 
+* ¿Podría indicar si la empresa ha utilizado Rotación de tareas como forma de organzación del trabajo de forma extendida? 
+* ¿Se ve a usted mismo como una persona que en general está dispuesta a asumir riesgos o que trata de evitarlos? 
+* En general, ¿se considera usted una persona impaciente o que muestra una gran paciencia? 
+* Nivel educativo de los encuestados 
+* Sexo de los entrevistados
