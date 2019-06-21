@@ -161,6 +161,7 @@ opinion %>%
   xtable() %>%
   print(comment = FALSE)
 
+#/Sexpr{"objeto"}
 ```
 En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
 
@@ -185,7 +186,9 @@ La innovación está dividida en cuatro áreas : en producto, en proceso, en org
 
 ```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
 # Los siguientes chunks pueden ser aplicables a shiny
-
+#añadir serie de tiempo de fundacion y comentar esto segun eso
+#ver si hay que separar por rama
+#heatmap por rama de innovacion
 inno_arr <- datos %>%
   select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
@@ -236,6 +239,7 @@ Queriamos ver si entre las cooperativas y las empresas convencionales hay difere
 ```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
 
 #Se podria hacer reactivo en shiny
+#ver outliers
 
 gen_ocup %>%
   mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
@@ -250,6 +254,7 @@ gen_ocup %>%
 
 #Se podria hacer reactivo en shiny
 #Conviene hacerlo en proporciones, sacar el 0 o algo para presentarlo mejor? 
+#Capaz se puede sacar el 0 y ponerlo en un comentario del grafico
 
 
 gen_ocup %>%
