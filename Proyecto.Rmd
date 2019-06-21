@@ -178,7 +178,16 @@ opinion %>%
 Se puede distinguir claramente que la mayoría de los encuestados de ambos sexo posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. En el caso de los hombres los grupos con educación terciaria/universitaria incompleta, secundaria y secundaria incompleta presentan un número de personas similar, mientras que en el caso de las mujeres el grupo secundaria tiene un número mayor de personas. 
 
 2. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
+```{r}
+#Cuanta gente dejó e ingresó a la cooperativa por tramos de edad?
 
+TraDej %>% 
+  filter(año == 2) %>%
+  gather("Tramos", "Cantidad", -año) %>%
+  mutate(Tramos = recode(Tramos, b14a35tot = "Menores de 35 años", b14a36a50t = "Entre 36-50 años", b14a51tot = "Mayores de 51 años", b14atotsoc = "Total de socios", b14atotasa = "Total de asalariados", b14atot = "Total de trabajadores"))
+
+    
+```
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
 
