@@ -22,7 +22,7 @@ datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
 
-gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"))
+gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"), starts_with("ciiu"))
 
 #Datos sobre: supervisión y conflicto: gestion, ausentismo
 
@@ -100,7 +100,7 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 opinion %>%
   filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
   ggplot(aes(as.factor(h89sexo))) +
-  geom_bar(fill = "orangered3") +
+  geom_bar(fill = "mediumseagreen") +
   labs(x = "Sexo", y = "Frecuencia") +
   scale_x_discrete(labels = c("Masculino", "Femenino") ) +
   geom_text(aes(y = (..count..), label = (..count..)), stat = "count", vjust = -.5, size = 9) +
@@ -143,8 +143,14 @@ TraDej %>%
   filter(año == 2) %>%
   gather("Tramos", "Cantidad", -año) %>%
   mutate(Tramos = recode(Tramos, b14a35tot = "Menores de 35 años", b14a36a50t = "Entre 36-50 años", b14a51tot = "Mayores de 51 años", b14atotsoc = "Total de socios", b14atotasa = "Total de asalariados", b14atot = "Total de trabajadores"))
+```
 
-    
+3. Descripción de socios y asalariados según ocupación, edad y género
+
+```{r}
+#ideal para shiny
+
+
 ```
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
@@ -167,7 +173,7 @@ inno_arr %>%
 ```
 Desde los años 90 hasta antes del 2000 hay un creciemento en el número de cooperativas que iniciaron sus actividades, la abrupta caída en su número se puede deber a la crisis. Posteriormente hay un crecimiento sostenido en dicho número que tal vez se corresponda con crecimiento de la economía en dicho periodo.
 
-```{r}
+```{r, fig.cap = "Mapa de calor, proporción de innovación de las cooperativas según año de inicio de actividades y área de innovación"}
 inno_arr %>%
   gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No")) %>%
@@ -192,54 +198,38 @@ En el anexo están disponibles los gráficos realizados inicialmente, dividiendo
 
 Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. La colaboración preguntada en la entrevista es en la forma de socios, proveedores y clientes.
 
-```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores, clientes y socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
 
-#Se podria hacer reactivo en shiny
 #ver outliers
 
 gen_ocup %>%
   mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
-  filter(a11a1 < 500) %>% #Hay un outlier que afecta la grafica
+  filter(a11a1 < 500, a11a2 < 500, a11a3 < 500) %>% #Hay outliers que son posibles errores y afectan mucho la grafica
+  gather("tipo_colab", "cantidad", a11a1, a11a2, a11a3) %>%
+  mutate(tipo_colab = recode(tipo_colab,a11a1 = "Proveedoras", a11a2 = "Socias", a11a3 = "Clientes")) %>%
+  group_by(tipo_colab, cantidad) %>%
+  summarise(n = n()) %>%
   ggplot() + 
-  geom_bar(aes(x = a11a1)) +
-  facet_wrap(vars(tipo_coop)) +
-  labs(x = "Número de cooperativas proveedoras", y = "Frecuencia entre las cooperativas encuestadas")
+  geom_bar(aes(x = cantidad, y =  n), stat = "identity", fill = "mediumseagreen") + 
+  facet_wrap(vars(tipo_colab)) +
+  labs(x = "Número de cooperativas", y = "Frecuencia entre las cooperativas encuestadas")
 ```
 
-```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
-
-#Se podria hacer reactivo en shiny
-#Conviene hacerlo en proporciones, sacar el 0 o algo para presentarlo mejor? 
-#Capaz se puede sacar el 0 y ponerlo en un comentario del grafico
-
-
+```{r}
 gen_ocup %>%
   mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
-  filter(a11a2 < 500) %>% #Hay un outlier que afecta la grafica
-  ggplot() + 
-  geom_bar(aes(x = a11a2)) +
-  facet_wrap(vars(tipo_coop)) +
-  labs(x = "Número de cooperativas socias", y = "Frecuencia entre las cooperativas encuestadas")
+  filter(a11a1 < 500, a11a2 < 500, a11a3 < 500) %>% #Hay outliers que son posibles errores y afectan mucho la grafica
+  gather("tipo_colab", "cantidad", a11a1, a11a2, a11a3) %>%
+  mutate(tipo_colab = recode(tipo_colab,a11a1 = "Proveedoras", a11a2 = "Socias", a11a3 = "Clientes")) %>%
+  group_by(tipo_colab, cantidad) %>%
+  filter(cantidad > 15)
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus clientes. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
+Resalta como hay un gran número de cooperativas que no colaboran con sus pares. También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son la impresión de diarios y revistas (una cooperativa), administración y consultoría de empresas (una cooperativa), agentes y corredores de seguros (tres cooperativas) y restaurantes y parrilladas (una cooperativa). 
 
-#Se podria hacer reactivo en shiny
-
-gen_ocup %>%
-  mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
-  filter(a11a3 < 500) %>% #Hay un outlier que afecta la grafica
-  ggplot() + 
-  geom_bar(aes(x = a11a3)) +
-  facet_wrap(vars(tipo_coop)) +
-  labs(x = "Número de cooperativas clientes", y = "Frecuencia entre las cooperativas encuestadas")
-```
 
 5. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
-
-6. Cómo afecta los reportes sobre desempeño (ausentismo, gestion, etc) el rol del informante?
-
 
 
 7. Como afecta la educación de los socios al desempeño de la cooperativa en los aspectos preguntados
@@ -293,9 +283,16 @@ datos %>%
 * Distribución de socios según máximo nivel educativo alcanzado
 * Distribución de socios según nivel educativo alcanzado (2012)
 * Distribución de socios según nivel educativo alcanzado (2012)
-
-
-
+* Trabajadores que dejaron la empresa por tramo de edad
+* Trabajadores que ingresaron a la empresa por tramo de edad
+* Salario nominal promedio según posición de trabajo
+* Capital
+* Gastos
+* Ingresos
+* Inversiones
+* Activo
+* Valor total del activo
+* Total del pasivo
 * Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
 * ¿Es el ausentismo un problema en la cooperativa?
 * Principales razones que explican el ausentismo (primer mencion¿)
