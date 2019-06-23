@@ -176,7 +176,11 @@ gen_ocup %>%
                categoria %in% c("b2SOC3", "b2ASAL3") ~ "admin",
                categoria %in% c("b2SOC4", "b2ASAL4") ~ "obrero_calif",
                categoria %in% c("b2SOC5", "b2ASAL5") ~ "obrero_nocalif",
+<<<<<<< HEAD
                categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio"
+=======
+               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio",
+>>>>>>> 829df26ea523d0bb91cc6993a2c9a5d2bb1dc37d
                ),
     cat_AS = if_else(categoria %in% c("b2SOC1", "b2SOC2", "b2SOC3", "b2SOC4", "b2SOC5", "b2SOC6"), "Socio", "Asalariado")
     ) %>%
