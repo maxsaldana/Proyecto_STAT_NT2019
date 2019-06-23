@@ -22,7 +22,7 @@ datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
 
-gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, b2SOC1:b2ASALtot, b2SOC135:b2ASALtotf, b3soc2p: b3asal6tuc, starts_with("ciiu"))
+gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, b2SOC1:b2ASALtot, b2SOC135:b2ASALtotf, b3soc2p:b3asal6tuc, starts_with("ciiu"))
 
 #Datos sobre: supervisión y conflicto: gestion, ausentismo
 
@@ -200,14 +200,48 @@ gen_ocup %>%
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 3. Exploración de los socios y asalariados 
-```{r}
-#Cuanta gente dejó e ingresó a la cooperativa por tramos de edad?
 
-TraDej %>% 
-  filter(año == 2) %>%
-  gather("Tramos", "Cantidad", -año) %>%
-  mutate(Tramos = recode(Tramos, b14a35tot = "Menores de 35 años", b14a36a50t = "Entre 36-50 años", b14a51tot = "Mayores de 51 años", b14atotsoc = "Total de socios", b14atotasa = "Total de asalariados", b14atot = "Total de trabajadores"))
+```{r, fig.cap= "Distribución de socios según nivel educativo"}
+gen_ocup %>%
+  select(año, b3soc2p:b3soc6tuc) %>%
+  group_by(año) %>%
+  summarise(b3soc2p = sum(b3soc2p, na.rm = T),
+            b3soc3si = sum(b3soc3si, na.rm = T),
+            b3soc4sc = sum(b3soc4sc, na.rm = T),
+            b3soc5tui = sum(b3soc5tui, na.rm = T),
+            b3soc6tuc = sum(b3soc6tuc, na.rm = T)) %>%
+  gather("NivelEducativo", "Cantidad", -año) %>%
+  mutate(NivelEducativo = recode(NivelEducativo, b3soc2p = "Primaria completa", b3soc3si = "Secundaria incompleta", b3soc4sc = "Secundaria completa", b3soc5tui = "Terciaria incompleta", b3soc6tuc = "Terciaria completa")) %>% 
+  ggplot() +
+  geom_bar(aes(x = NivelEducativo, y = Cantidad, fill = NivelEducativo), stat = "identity", position = "dodge") + facet_wrap(~año) + theme(axis.text.x = element_text(angle = 90)) +
+  labs(x = "Nivel educativo", y = "Cantidad", fill = "Nivel Educativo")
+  
 ```
+
+En este gráfico de barras se ve la disctribución de los socios segun su nivel educativo. En la gráfica del año 1, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
+
+
+```{r, fig.cap= "Distribución de asalariados según nivel educativo"}
+gen_ocup %>%
+  select(año, b3asal2p:b3asal6tuc) %>%
+  filter(año == 2) %>% 
+  group_by(año) %>%
+  summarise(b3asal2p = sum(b3asal2p, na.rm = T),
+            b3asal3si = sum(b3asal3si, na.rm = T),
+            b3asal4sc = sum(b3asal4sc, na.rm = T),
+            b3asal5tui = sum(b3asal5tui, na.rm = T),
+            b3asal6tuc = sum(b3asal6tuc, na.rm = T)) %>%
+  gather("NivelEducativo", "Cantidad", -año) %>%
+  mutate(NivelEducativo = recode(NivelEducativo, b3asal2p = "Primaria completa", b3asal3si = "Secundaria incompleta", b3asal4sc = "Secundaria completa", b3asal5tui = "Terciaria incompleta", b3asal6tuc = "Terciaria completa")) %>% 
+ ggplot() +
+  geom_point(aes(x = Cantidad, y = NivelEducativo, colour = NivelEducativo), size = 4) +
+  geom_segment(aes(x = 0, y = NivelEducativo, xend = Cantidad, yend = NivelEducativo, colour = NivelEducativo), size = 2) +
+   theme(axis.text.x = element_text(vjust = 0.5, size = 8), legend.position = "none") +
+  labs(x = "Cantidad", y = "Nivel Educativo", colour = "Nivel Educativo") +
+  coord_flip()
+```
+
+Al igual que en el grafico anterior, este grafico muestra la distribucion segun el nivel educativo, pero, de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.`
 
 
 4. Tendencia a la innovación según la antiguedad de la cooperativa
