@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt')
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt', message = FALSE, warning = FALSE)
 ```
 
 
@@ -22,7 +22,7 @@ datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
 
-gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, starts_with("b2a", ignore.case = FALSE), starts_with("b2b", ignore.case = FALSE), starts_with("b3soc"), starts_with("ciiu"))
+gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, b2SOC1:b2ASALtot, b2SOC135:b2ASALtotf, b3soc2p: b3asal6tuc, starts_with("ciiu"))
 
 #Datos sobre: supervisión y conflicto: gestion, ausentismo
 
@@ -69,7 +69,7 @@ TraDej <- datos %>%
 
 # Introducción
 
-La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010'2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. 
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en el período 2010-2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. 
 
 Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica. 
 
@@ -135,7 +135,67 @@ opinion %>%
 
 En la figura 2 se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
 
-2. Exploración de los socios y asalariados (y comparación, incluir nivel educativo también)
+2. Características de los socios 
+
+```{r}
+# ver que pasa con esto
+ocup_edad <- gen_ocup %>%
+  filter(año == 2) %>%
+  gather("soc_s_edad_ocup", "Cantidad", b2SOC135:b2SOCtot51) %>%
+  filter(soc_s_edad_ocup != "b2SOCtot35", soc_s_edad_ocup != "b2SOCtot35a5", soc_s_edad_ocup != "b2SOCtot51") %>%
+  mutate(
+    cargo = case_when(
+      soc_s_edad_ocup %in% c("b2SOC135", "b2SOC135a50","b2SOC151") ~ "Gerente",
+      soc_s_edad_ocup %in% c("b2SOC235", "b2SOC235a50", "b2SOC251") ~ "Prof_o_tec",
+      soc_s_edad_ocup %in% c("b2SOC335", "b2SOC335a50", "b2SOC351") ~ "Admin",
+      soc_s_edad_ocup %in% c("b2SOC435", "b2SOC435a50", "b2SOC451") ~ "obrero_trabcalif",
+      soc_s_edad_ocup %in% c("b2SOC535", "b2SOC535a50", "b2SOC551") ~ "obrero_trabnocalif",
+      soc_s_edad_ocup %in% c("b2SOC635", "b2SOC635a50", "b2SOC651") ~ "domicilio"
+            ),
+    
+    edad = case_when(
+      soc_s_edad_ocup %in% c("b2SOC135", "b2SOC235", "b2SOC335", "b2SOC435", "b2SOC535") ~ "Menor_35" ,
+      soc_s_edad_ocup %in% c("b2SOC135a50", "b2SOC235a50", "b2SOC335a50", "b2SOC435a50", "b2SOC535a50") ~ "36_50" ,
+      soc_s_edad_ocup %in% c("b2SOC151", "b2SOC151", "b2SOC151", "b2SOC151", "b2SOC151") ~ "Mayor_51"
+    )
+  )
+  
+ocup_edad %>%
+  group_by(cargo, edad) %>%
+  summarise(n = n())
+```
+
+```{r, fig.cap = "Gráfico de barras, cantidad de trabajadores según categoría de ocupación y si son asalariados o socios de la cooperativa"}
+gen_ocup %>%
+  gather("categoria", "ocup", b2SOC1:b2SOC6, b2ASAL1:b2ASAL6) %>%
+  filter(!is.na(categoria), cp == 1) %>%
+  mutate(
+    cat_ocup = case_when(
+               categoria %in% c("b2SOC1", "b2ASAL1") ~ "Gerente_dir",
+               categoria %in% c("b2SOC2", "b2ASAL2") ~ "prof_tec",
+               categoria %in% c("b2SOC3", "b2ASAL3") ~ "admin",
+               categoria %in% c("b2SOC4", "b2ASAL4") ~ "obrero_calif",
+               categoria %in% c("b2SOC5", "b2ASAL5") ~ "obrero_nocalif",
+               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio",
+               ),
+    cat_AS = if_else(categoria %in% c("b2SOC1", "b2SOC2", "b2SOC3", "b2SOC4", "b2SOC5", "b2SOC6"), "Socio", "Asalariado")
+    ) %>%
+  ggplot() +
+  geom_bar(aes(x = cat_ocup, y = ocup, fill = cat_AS), stat = "identity", position = "dodge") +
+  scale_x_discrete(labels = c(
+    "Administrativos", 
+    "Trabajadores \n a domicilio", 
+    "Gerentes y \n directores", 
+    "Obreros \n calificados", 
+    "Obreros \n no calificados", 
+    "Profesionales \n y técnicos")
+    ) + 
+  labs(x = "Categoría de ocupación", y = "Cantidad de trabajadores", fill = "") +
+  scale_fill_brewer(palette = "Accent")
+```
+La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
+
+3. Exploración de los socios y asalariados 
 ```{r}
 #Cuanta gente dejó e ingresó a la cooperativa por tramos de edad?
 
@@ -145,15 +205,8 @@ TraDej %>%
   mutate(Tramos = recode(Tramos, b14a35tot = "Menores de 35 años", b14a36a50t = "Entre 36-50 años", b14a51tot = "Mayores de 51 años", b14atotsoc = "Total de socios", b14atotasa = "Total de asalariados", b14atot = "Total de trabajadores"))
 ```
 
-3. Descripción de socios y asalariados según ocupación, edad y género
 
-```{r}
-#ideal para shiny
-
-
-```
-
-3. Tendencia a la innovación según la antiguedad de la cooperativa
+4. Tendencia a la innovación según la antiguedad de la cooperativa
 
 La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente innovarían menos porque están recien estableciéndose y no pueden invertir tanto en dicha área.   
 
@@ -194,7 +247,7 @@ En el anexo están disponibles los gráficos realizados inicialmente, dividiendo
 
 
 
-4.  ¿Colaboran más las cooperativas entre sí que las empresas con ellas? 
+5.  ¿Colaboran más las cooperativas entre sí que las empresas con ellas? 
 
 Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. La colaboración preguntada en la entrevista es en la forma de socios, proveedores y clientes.
 
@@ -226,21 +279,72 @@ gen_ocup %>%
 
 ```
 
-Resalta como hay un gran número de cooperativas que no colaboran con sus pares. También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son la impresión de diarios y revistas (una cooperativa), administración y consultoría de empresas (una cooperativa), agentes y corredores de seguros (tres cooperativas) y restaurantes y parrilladas (una cooperativa). 
+Resalta como hay un gran número de cooperativas que no colaboran con sus pares. También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son: 
+* Impresión de diarios y revistas (una cooperativa)
+* Administración y consultoría de empresas (una cooperativa)
+* Agentes y corredores de seguros y mantenimiento de vehículos (tres cooperativas)
+* Restaurantes y parrilladas (una cooperativa). 
 
 
-5. Características autorreportadas por las personas (paciencia, aversión al riesgo, sexo, nivel educativo) tienen relación con ciertas opiniones y reportes sobre las cooperativas?
+6. ¿Aquellos encuestados que se reportan como más impacientes ven más problemas en el ausentismo?
+
+Queremos tener una idea de como características de las personas sesgan sus respuestas. Hay que tener en cuenta que como estas características son autorreportadas van a tener en si misma un sesgo también. Si bien hay cierta ambigüedad en cuanto a que se referían con paciencia los encuestadores, nuestra intuición nos lleva a pensar que los que son más impacientes tienen menos tolerancia con el ausentismo y lo reportarían más como un problema. 
+
+```{r, fig.cap = "Gráfico de barras apiladas, proporción de encuestados que reportan el ausentismo como un problema según su nivel de paciencia (donde 0 es poco paciente y 10 es muy paciente)"}
+dat_5 <- datos %>%
+  select(form, año, f3, h5pacienci, h1posturaa, h89sexo) %>%
+  filter(año == 2, is.na(f3) == FALSE, is.na(h5pacienci) == FALSE ) %>%
+  mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino"), f3 = recode(f3, `1` = "Sí", `2` = "No"))
 
 
-7. Como afecta la educación de los socios al desempeño de la cooperativa en los aspectos preguntados
+  ggplot(dat_5) +
+    geom_bar(aes(x = as.factor(h5pacienci), fill = as.factor(f3)), position = "fill") +
+    labs(x = "Nivel de paciencia", y = "Proporción", fill = "¿Es el ausentismo \n un problema \n en su cooperativa?") +
+    scale_fill_brewer(palette = "Accent")
+```
 
-8. Diferencias entre las cooperativas en cuanto a sus problemas según distintas variables (ej : inversión en innovación)
- 
+Se puede ver que hay una correspondencia entre aquellos que se reportan muy impacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
 
-9. Proporción de cooperativas que usan la rotación de tareas y el trabajo en equipo (y de forma extendida) 
+7. Desempeño de las cooperativas por área según su desempeño en otra área
 
-10. Relación entre monto de la inversión y el resultado
+A los encuestados se les preguntó como percibían a su cooperativa en distintas áreas en comparación a empresas de similar tamaño. Queremos ver como se correlacionan los desempeños en dichas áreas. 
 
+```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en capacitación de personal, año 2010"}
+dat_7 <- datos %>%
+  select(form, año, g11, g12, g13, g14, g15) 
+
+dat_7 %>%
+  filter(año == 1) %>%
+  group_by(g14, g12 ) %>%
+  summarise(n = n()) %>%
+  mutate(prop = round(n/sum(n), 4)) %>%
+  ggplot(aes(x = as.factor(g14), y = as.factor(g12))) +
+  geom_tile(aes(fill = prop)) +
+  geom_text(aes(label = prop), color = "white") +
+  scale_x_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
+  scale_y_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
+  labs(x = "Capacitación de personal", y = "Capacidad de producción", fill = "Proporción")
+```
+
+```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en maquinaria y equipos, año 2010"}
+dat_7 <- datos %>%
+  select(form, año, g11, g12, g13, g14, g15) 
+
+dat_7 %>%
+  filter(año == 1) %>%
+  group_by(g15, g12 ) %>%
+  summarise(n = n()) %>%
+  mutate(prop = round(n/sum(n), 4)) %>%
+  ggplot(aes(x = as.factor(g15), y = as.factor(g12))) +
+  geom_tile(aes(fill = prop)) +
+  geom_text(aes(label = prop), color = "white") +
+  scale_x_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
+  scale_y_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
+  labs(x = "Maquinaria y equipos", y = "Capacidad de producción", fill = "Proporción")
+```
+Se puede ver que no hay cooperativas cuya situación en capacitación de personal en comparación a empresas pares sea mucho peor y que además su capacidad de producción sea mucho mejor. La mayoría de las empresas que se consideran en igualdad de condiciones en un área se considera en la misma situación en la otra área. Algo similar pasa cuando cruzamos las variables de situación en maquinaria y equipos y capacidad de producción.  
+
+8. Relación entre monto de la inversión y el resultado
 
 ```{r}
 datos %>%
@@ -254,15 +358,12 @@ datos %>%
 
 ```
 
-11. Ausentismo según características de los socios
+# Descripción de la aplicación Shiny
+
+En nuestra aplicación queremos expandir sobre la pregunta 7 de nuestro análisis exploratorio
 
 
-```{r}
-
-```
-
-
-# Cometarios finales
+# Comentarios finales
 
 
 # Anexo
