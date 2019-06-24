@@ -22,7 +22,8 @@ datos <- read_dta("Datos/2011_2013panel.dta")
 
 #Datos sobre: info general, cantidad de ocupados segun categorias   
 
-gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, b2SOC1:b2ASALtot, b2SOC135:b2ASALtotf, b3soc2p:b3asal6tuc, starts_with("ciiu"))
+gen_ocup <- datos %>% select(form, año, cp, ct, a22cargo, a4, a11a1, a11a2, a11a3,b1, b2SOC1:b2ASALtot, b2SOC135:b2ASALtotf, b3soc2p: b3asal6tuc, starts_with("ciiu"))
+
 
 #Datos sobre: supervisión y conflicto: gestion, ausentismo
 
@@ -176,11 +177,7 @@ gen_ocup %>%
                categoria %in% c("b2SOC3", "b2ASAL3") ~ "admin",
                categoria %in% c("b2SOC4", "b2ASAL4") ~ "obrero_calif",
                categoria %in% c("b2SOC5", "b2ASAL5") ~ "obrero_nocalif",
-<<<<<<< HEAD
-               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio"
-=======
                categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio",
->>>>>>> 829df26ea523d0bb91cc6993a2c9a5d2bb1dc37d
                ),
     cat_AS = if_else(categoria %in% c("b2SOC1", "b2SOC2", "b2SOC3", "b2SOC4", "b2SOC5", "b2SOC6"), "Socio", "Asalariado")
     ) %>%
@@ -200,6 +197,36 @@ gen_ocup %>%
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 3. Exploración de los socios y asalariados 
+
+```{r, fig.cap = "Gráfico de barras, cantidad de trabajadores según categoría de ocupación y si son asalariados o socios de la cooperativa"}
+gen_ocup %>%
+  gather("categoria", "ocup", b2SOC1:b2SOC6, b2ASAL1:b2ASAL6) %>%
+  filter(!is.na(categoria), cp == 1) %>%
+  mutate(
+    cat_ocup = case_when(
+               categoria %in% c("b2SOC1", "b2ASAL1") ~ "Gerente_dir",
+               categoria %in% c("b2SOC2", "b2ASAL2") ~ "prof_tec",
+               categoria %in% c("b2SOC3", "b2ASAL3") ~ "admin",
+               categoria %in% c("b2SOC4", "b2ASAL4") ~ "obrero_calif",
+               categoria %in% c("b2SOC5", "b2ASAL5") ~ "obrero_nocalif",
+               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio"
+               ),
+    cat_AS = if_else(categoria %in% c("b2SOC1", "b2SOC2", "b2SOC3", "b2SOC4", "b2SOC5", "b2SOC6"), "Socio", "Asalariado")
+    ) %>%
+  ggplot() +
+  geom_bar(aes(x = cat_ocup, y = ocup, fill = cat_AS), stat = "identity", position = "dodge") +
+  scale_x_discrete(labels = c(
+    "Administrativos", 
+    "Trabajadores \n a domicilio", 
+    "Gerentes y \n directores", 
+    "Obreros \n calificados", 
+    "Obreros \n no calificados", 
+    "Profesionales \n y técnicos")
+    ) + 
+  labs(x = "Categoría de ocupación", y = "Cantidad de trabajadores", fill = "") +
+  scale_fill_brewer(palette = "Accent")
+```
+La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 ```{r, fig.cap= "Distribución de socios según nivel educativo"}
 gen_ocup %>%
@@ -242,6 +269,7 @@ gen_ocup %>%
 ```
 
 Al igual que en el grafico anterior, este grafico muestra la distribucion segun el nivel educativo, pero, de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.`
+
 
 
 4. Tendencia a la innovación según la antiguedad de la cooperativa
@@ -391,9 +419,6 @@ datos %>%
   mutate(resultado= recode(resultado, `1` = "Muy malo", `2` = "Malo", `3` = "Nulo", `4` = "Bueno", `5` = "Muy bueno")) %>%
   ggplot() +
   geom_boxplot(aes(x= resultado, y= monto))
-
-
-
 ```
 
 # Descripción de la aplicación Shiny
