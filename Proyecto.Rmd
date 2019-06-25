@@ -3,10 +3,12 @@ title: "Proyecto"
 author: "Santiago Burgoa, Pablo Deleón, Maximiliano Saldaña"
 date: "8 de junio de 2019"
 output: pdf_document
+header-includes:
+ \usepackage{float}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt', message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt', message = FALSE, warning = FALSE, fig.height = 5)
 ```
 
 
@@ -78,8 +80,6 @@ Nuestra intención es utilizar estos datos para indagar en el funcionamiento de 
 Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos. Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. Agradecemos la información adicional sobre la encuesta suministrada por Andrés Dean.
 
 
-
-
 # Datos
 
 La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción. [^1] Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales.  Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
@@ -90,16 +90,14 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 [^1]: http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/
 
 
-
-
+\newpage
 
 # Análisis exploratorio
 
-## Preguntas guía: 
-
 1. Descripción de los encuestados
 
-```{r, fig.cap = "Gráfico de barras, cantidad de encuestados según su cargo, dividido en cooperativas y empresas convencionales", message = FALSE}
+```{r, fig.cap = "Gráfico de barras, cantidad de encuestados según su cargo, dividido en cooperativas y empresas convencionales"}
+
 gen_ocup %>%
   filter(is.na(a22cargo) == FALSE) %>%
   mutate(a22cargo = recode(a22cargo, `1` = "Directivo/Propietario", `2` = "Gerente/ \n Administrador general", `3` = "Contador", `4` = "Jefe de \n producción", `5` = "Otro"), cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
@@ -139,6 +137,8 @@ opinion %>%
   labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
 ```
 
+\newpage
+
 En la figura 2 se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
 
 2. Exploración de los socios y asalariados   
@@ -173,6 +173,7 @@ gen_ocup %>%
 ```
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
+\newpage
 ```{r, fig.cap = "Distribución de socios según nivel educativo"}
 gen_ocup %>%
   select(año, b3soc2p:b3soc6tuc) %>%
@@ -279,7 +280,7 @@ gen_ocup %>%
   labs(x = "Número de cooperativas", y = "Frecuencia entre las cooperativas encuestadas")
 ```
 
-```{r}
+```{r, echo = FALSE}
 gen_ocup %>%
   mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
   filter(a11a1 < 500, a11a2 < 500, a11a3 < 500) %>% #Hay outliers que son posibles errores y afectan mucho la grafica
@@ -399,8 +400,7 @@ En este gráfico se pueden distinguir las empresas y cooperativas que son más e
 
 # Descripción de la aplicación Shiny
 
-En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio
-
+En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
 
 # Comentarios finales
 
