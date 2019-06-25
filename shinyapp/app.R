@@ -4,12 +4,14 @@ library(haven)
 
 datos <- read_dta("2011_2013panel.dta")
 dat_7 <- datos %>%
-  select(form, año, g11, g12, g13, g14, g15)
+  select(form, año, g11, g12, g13, g14, g15) %>%
+  mutate(año = as.factor(recode(año, `1` = 2010, `2` = 2011)))
 
 ui <- fluidPage(
+  titlePanel(h3("Mapa de calor")),
   selectInput(inputId = "anio",
               label = "Año",
-              c("2010" = "`1`","2011" = "`2`")
+              c("2010" = "2010","2011" = "2011")
   ),
 
   
