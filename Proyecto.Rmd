@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt', message = FALSE, warning =
 
 library(tidyverse)
 library(haven)
-library(xtable)
+library(scales)
 library(lubridate)
 
 datos <- read_dta("Datos/2011_2013panel.dta")
@@ -70,7 +70,7 @@ TraDej <- datos %>%
 
 # Introducción
 
-La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en los años 2010 y 2011. Dicha encuesta fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. 
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en los años 2010 y 2011. Dicha investigación fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. La modalidad era mediante un formulario que se completaba en base a las respuestas de personal de las empresas y cooperativas que generalmente ocupaban cargos de gestión (directivos, propietarios, gerentes, administradores, etc.). 
 
 Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica. 
 
@@ -99,18 +99,21 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 
 1. Descripción de los encuestados
 
-```{r, fig.cap = "Gráfico de barras, cantidad de encuestados de cada sexo.", message = FALSE}
-opinion %>%
-  filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
-  ggplot(aes(as.factor(h89sexo))) +
-  geom_bar(fill = "mediumseagreen") +
-  labs(x = "Sexo", y = "Frecuencia") +
-  scale_x_discrete(labels = c("Masculino", "Femenino") ) +
-  geom_text(aes(y = (..count..), label = (..count..)), stat = "count", vjust = -.5, size = 9) +
-  ylim(0, 300)
+```{r, fig.cap = "Gráfico de barras, cantidad de encuestados según su cargo, dividido en cooperativas y empresas convencionales", message = FALSE}
+gen_ocup %>%
+  filter(is.na(a22cargo) == FALSE) %>%
+  mutate(a22cargo = recode(a22cargo, `1` = "Directivo/Propietario", `2` = "Gerente/ \n Administrador general", `3` = "Contador", `4` = "Jefe de \n producción", `5` = "Otro"), cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
+  group_by(cp, a22cargo) %>%
+  summarise(Frecuencia = n()) %>%
+  ggplot(aes(x = reorder(a22cargo, -Frecuencia))) +
+  geom_bar(aes(y = Frecuencia), stat = "identity", fill = "mediumseagreen") +
+  facet_wrap(vars(cp)) + 
+  geom_text(aes(y = Frecuencia, label = Frecuencia), vjust = -.5) +
+  ylim(0, 275) + 
+  theme(axis.text.x = element_text(size = 7)) +
+  labs(x = "Cargo", y = "Frecuencia") 
 ```
-
-En los datos había una gran cantidad de NA, esto se debe a que en las primera tanda de entrevistas no era registrado el sexo del encuestado. Como se puede apreciar, la mayoría de los encuestados eran hombres.
+Los directivos/propietarios conformaban la mayoría de los encuestados tanto en las cooperativas como en las empresas convencionales. Los que entraban en la categoría otros son una parte considerable de los encuestados en los dos grupos de organizaciones, pero no tenemos información disponibles sobre qué posiciones conforman dicha categoría
 
 ```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados"}
 opinion %>%
@@ -198,7 +201,7 @@ gen_ocup %>%
 ```
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
-```{r, fig.cap= "Distribución de socios según nivel educativo"}
+```{r, fig.cap = "Distribución de socios según nivel educativo"}
 gen_ocup %>%
   select(año, b3soc2p:b3soc6tuc) %>%
   group_by(año) %>%
@@ -219,7 +222,7 @@ gen_ocup %>%
 En este gráfico de barras se ve la distribución de los socios segun su nivel educativo. En la gráfica del año 2010, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
 
 
-```{r, fig.cap= "Distribución de asalariados según nivel educativo"}
+```{r, fig.cap = "Distribución de asalariados según nivel educativo"}
 gen_ocup %>%
   select(año, b3asal2p:b3asal6tuc) %>%
   filter(año == 2) %>% 
@@ -271,16 +274,16 @@ inno_arr %>%
   mutate(prop = n/sum(n)) %>%
   filter(hubo != "No") %>%
   ggplot() +
-  geom_tile(aes(x = a4, y = tipo, fill = prop)) +
+  geom_tile(aes(x = as.factor(a4), y = tipo, fill = prop)) +
   scale_y_discrete(labels = c("Producto", "Proceso", "Organización", "Comercialización")) + 
-  labs(x = "Año de inicio de actividades", y = "Área de innovación", fill = "Proporción de \n empresas \n que innovaron") 
+  labs(x = "Año de inicio de actividades", y = "Área de innovación", fill = "Proporción de \n empresas \n que innovaron") +
+  theme(axis.text.x = element_text(angle = 90))
 ```
 
 A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. Por eso el mapa de calor de la figura ... es más útil para comparar a partir de los años 90 a partir de donde hay un mayor número de cooperativas.  
 
 
-En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero resultó más conveniente reunir la información en un mapa de calor. En dicho gráfico podemos apreciar que antes de los años 90 hay varios años donde no hubo cooperativas que iniciaran sus actividades. No se puede discernir un patrón general así que no podemos confirmar nuestra hipótesis de que las cooperativas más nuevas innovan menos. A pesar de esto el gráfico puede utilizarse para según cada año de inicio de actividades como es el desempeño actual de las cooperativas en cuanto a innovación.
-
+En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero resultó más conveniente reunir la información en un mapa de calor. En dicho gráfico podemos apreciar que antes de los años 90 hay varios años donde no hubo cooperativas que iniciaran sus actividades. Con excepción de la innovación en organización, no se puede discernir un patrón general así que no podemos confirmar nuestra hipótesis de que las cooperativas más nuevas innovan menos. A pesar de esto el gráfico puede utilizarse para según cada año de inicio de actividades como es el desempeño actual de las cooperativas en cuanto a innovación. En el área de organización se puede apreciar que las empresas cuyas actividades iniciaron antes de 1980 no tuvieron innovaciones en esta área, pero como mencionamos anteriormente el escaso número de empresas de este período hace que no podamos concluir con seguridad que esta es la tendencia.
 
 
 4.  ¿Colaboran más las cooperativas entre sí que las empresas con ellas? 
@@ -382,14 +385,23 @@ Se puede ver que no hay cooperativas cuya situación en capacitación de persona
 
 7. Relación entre monto de la inversión y el resultado
 
-```{r}
+```{r, fig.cap = "Gráfico de cajas, distribución de las inversiones en los últimos 3 años de empresas y cooperativas según el resultado de la misma"}
 datos %>%
-  select(form, año, g31:g31resul) %>%
-  rename("invierte"= g31, "monto"= g31inv, "resultado"= g31resul) %>%
-  mutate(resultado= recode(resultado, `1` = "Muy malo", `2` = "Malo", `3` = "Nulo", `4` = "Bueno", `5` = "Muy bueno")) %>%
+  select(cp, form, año, g31:g31resul) %>%
+  mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
+  filter(g31 == 1, is.na(g31resul) == FALSE) %>%
   ggplot() +
-  geom_boxplot(aes(x= resultado, y= monto))
+  geom_boxplot(aes(x = as.factor(g31resul), y = g31inv)) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+              labels = trans_format("log10", math_format(10^.x))) +
+  facet_wrap(vars(cp)) + 
+  scale_x_discrete(labels = c("Malo", "Nulo", "Bueno", "Muy bueno")) +
+  labs(x = "Resultado de la inversión", y = "Monto de la inversión (escala log10)")
 ```
+Ninguna empresa o cooperativa reporto resultados muy malos  inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
+
+
+
 
 # Descripción de la aplicación Shiny
 
@@ -415,8 +427,8 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 * Distribución de socios según categoría de ocupación, género y edad
 * Distribución de asalariados según categoría de ocupación, género y edad
 * Distribución de socios según máximo nivel educativo alcanzado
-* Distribución de socios según nivel educativo alcanzado (2012)
-* Distribución de socios según nivel educativo alcanzado (2012)
+* Distribución de socios según nivel educativo alcanzado 
+* Distribución de socios según nivel educativo alcanzado 
 * Trabajadores que dejaron la empresa por tramo de edad
 * Trabajadores que ingresaron a la empresa por tramo de edad
 * Salario nominal promedio según posición de trabajo
@@ -427,10 +439,10 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 * Activo
 * Valor total del activo
 * Total del pasivo
-* Principales problemas de la cooperativa en términos de gestión de personal (primera mencion?)
+* Principales problemas de la cooperativa en términos de gestión de personal
 * ¿Es el ausentismo un problema en la cooperativa?
-* Principales razones que explican el ausentismo (primer mencion¿)
-* ¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? (2012)
+* Principales razones que explican el ausentismo 
+* ¿Cuál es su percepción sobre la actitud hacia el trabajo que predomina entre quienes trabajan en la cooperativa? 
 * ¿Cuál es su percepción sobre la calidad de las relaciones humanas entre quienes trabajan en la cooperativa? 
 * En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a tecnología
 * En relación a empresas de similar tamaño y tipo de producción, señale cómo se ubica su empresa en cuanto a capacidad de producción
@@ -452,37 +464,45 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 * Sexo de los entrevistados
 
 
-```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
-ggplot(inno_arr) +
-  geom_bar(aes(year(a4), fill = as.factor(g4prod)), position = "fill") +
-  scale_fill_discrete(labels = c("Si", "No" )) +
-  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en producto?")
+
+## 2. Gráficos adicionales de pregunta 3 
+
+```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
+inno_arr %>% 
+  ggplot() +
+   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4prod)), position = "fill") +
+   scale_fill_discrete(labels = c("Si", "No" )) +
+   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en producto?") +
+   theme(axis.text.x = element_text(angle = 90)) 
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
-  geom_bar(aes(year(a4), fill = as.factor(g4proc)), position = "fill") +
+  geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4proc)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
-  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en proceso?")
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en proceso?") +
+   theme(axis.text.x = element_text(angle = 90)) 
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de cooperativa que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
-  geom_bar(aes(year(a4), fill = as.factor(g4org)), position = "fill") +
+  geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4org)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
-  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en organización?")
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en organización?") +
+   theme(axis.text.x = element_text(angle = 90)) 
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de empresas que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
-  geom_bar(aes(year(a4), fill = as.factor(g4com)), position = "fill") +
+  geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4com)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
-  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en comercialización?")
+  labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en comercialización?") +
+   theme(axis.text.x = element_text(angle = 90)) 
 
 ```
