@@ -143,34 +143,6 @@ En la figura 2 se puede distinguir claramente que la mayoría de los encuestados
 
 2. Exploración de los socios y asalariados   
 
-```{r}
-# ver que pasa con esto
-ocup_edad <- gen_ocup %>%
-  filter(año == 2) %>%
-  gather("soc_s_edad_ocup", "Cantidad", b2SOC135:b2SOCtot51) %>%
-  filter(soc_s_edad_ocup != "b2SOCtot35", soc_s_edad_ocup != "b2SOCtot35a5", soc_s_edad_ocup != "b2SOCtot51") %>%
-  mutate(
-    cargo = case_when(
-      soc_s_edad_ocup %in% c("b2SOC135", "b2SOC135a50","b2SOC151") ~ "Gerente",
-      soc_s_edad_ocup %in% c("b2SOC235", "b2SOC235a50", "b2SOC251") ~ "Prof_o_tec",
-      soc_s_edad_ocup %in% c("b2SOC335", "b2SOC335a50", "b2SOC351") ~ "Admin",
-      soc_s_edad_ocup %in% c("b2SOC435", "b2SOC435a50", "b2SOC451") ~ "obrero_trabcalif",
-      soc_s_edad_ocup %in% c("b2SOC535", "b2SOC535a50", "b2SOC551") ~ "obrero_trabnocalif",
-      soc_s_edad_ocup %in% c("b2SOC635", "b2SOC635a50", "b2SOC651") ~ "domicilio"
-            ),
-    
-    edad = case_when(
-      soc_s_edad_ocup %in% c("b2SOC135", "b2SOC235", "b2SOC335", "b2SOC435", "b2SOC535") ~ "Menor_35" ,
-      soc_s_edad_ocup %in% c("b2SOC135a50", "b2SOC235a50", "b2SOC335a50", "b2SOC435a50", "b2SOC535a50") ~ "36_50" ,
-      soc_s_edad_ocup %in% c("b2SOC151", "b2SOC151", "b2SOC151", "b2SOC151", "b2SOC151") ~ "Mayor_51"
-    )
-  )
-  
-ocup_edad %>%
-  group_by(cargo, edad) %>%
-  summarise(n = n())
-```
-
 ```{r, fig.cap = "Gráfico de barras, cantidad de trabajadores según categoría de ocupación y si son asalariados o socios de la cooperativa"}
 gen_ocup %>%
   gather("categoria", "ocup", b2SOC1:b2SOC6, b2ASAL1:b2ASAL6) %>%
@@ -286,9 +258,9 @@ A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaro
 En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero resultó más conveniente reunir la información en un mapa de calor. En dicho gráfico podemos apreciar que antes de los años 90 hay varios años donde no hubo cooperativas que iniciaran sus actividades. Con excepción de la innovación en organización, no se puede discernir un patrón general así que no podemos confirmar nuestra hipótesis de que las cooperativas más nuevas innovan menos. A pesar de esto el gráfico puede utilizarse para según cada año de inicio de actividades como es el desempeño actual de las cooperativas en cuanto a innovación. En el área de organización se puede apreciar que las empresas cuyas actividades iniciaron antes de 1980 no tuvieron innovaciones en esta área, pero como mencionamos anteriormente el escaso número de empresas de este período hace que no podamos concluir con seguridad que esta es la tendencia.
 
 
-4.  ¿Colaboran más las cooperativas entre sí que las empresas con ellas? 
+4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
 
-Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. La colaboración preguntada en la entrevista es en la forma de socios, proveedores y clientes.
+Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. Estas se diferencia en que la primera cuenta con un número de asalariados superior al 20% según la clasificación usada en el informe de la encuesta. La colaboración preguntada en la entrevista es en la forma de empresas socias, proveedoras y clientas que también son cooperativas.
 
 ```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores, clientes y socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
 
@@ -400,7 +372,29 @@ datos %>%
 ```
 Ninguna empresa o cooperativa reporto resultados muy malos  inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
+8. ¿Que también administran las empresas y las cooperativas sus ingresos y gastos?
 
+```{r, fig.cap = "Gráfico de dispersión, desempeño en cuanto a balance de ingresos y gastos"}
+datos %>%
+  select(cp, form, a4, año, e44 , e14) %>%
+  mutate(
+    a4 = as.Date(a4, format = "%d/%m/%Y"), 
+    año = recode(año, `1` = "2010", `2` = "2011"), 
+    cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa")
+    ) %>%
+  filter(year(a4) < 2000) %>% 
+ggplot(aes(e44, e14)) +
+  geom_point(color = "mediumseagreen") +
+  geom_abline(aes(intercept = 0, slope = 45)) +
+  facet_grid(vars(cp), vars(año)) + 
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+              labels = trans_format("log10", math_format(10^.x))) +
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+              labels = trans_format("log10", math_format(10^.x))) +
+  labs(x = "Total de ingresos", y = "Total de gastos") 
+ 
+```
+En este gráfico se pueden distinguir las empresas y cooperativas que son más eficientes con su administración de las finanzas. Aquellas que se encuentran por encima de la curva de ajuste tienen un mejor balance que las que están sobre o por debajo de la misma.
 
 
 # Descripción de la aplicación Shiny
@@ -410,6 +404,7 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 
 # Comentarios finales
 
+Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables, consideramos que pudimos tener una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión y sus finanzas.  
 
 # Anexo
 
