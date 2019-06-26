@@ -131,7 +131,7 @@ opinion %>%
   ggplot() +
   geom_bar(aes(as.factor(h84educaci), fill = as.factor(h89sexo)), position = "fill") +
   scale_fill_discrete(labels = c("Masculino", "Femenino")) +
-  scale_fill_brewer(palette = "Accent") +
+  scale_fill_brewer(palette = "Set1") +
   scale_x_discrete(labels = c("Primaria", "Secundaria incompleta", "Secundaria", "Terciaria/Universitaria incompleta", "Terciaria/Universitaria")) +
   coord_flip() +
   labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
@@ -154,7 +154,7 @@ gen_ocup %>%
                categoria %in% c("b2SOC3", "b2ASAL3") ~ "admin",
                categoria %in% c("b2SOC4", "b2ASAL4") ~ "obrero_calif",
                categoria %in% c("b2SOC5", "b2ASAL5") ~ "obrero_nocalif",
-               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio",
+               categoria %in% c("b2SOC6", "b2ASAL6") ~ "adomicilio"
                ),
     cat_AS = if_else(categoria %in% c("b2SOC1", "b2SOC2", "b2SOC3", "b2SOC4", "b2SOC5", "b2SOC6"), "Socio", "Asalariado")
     ) %>%
@@ -169,12 +169,12 @@ gen_ocup %>%
     "Profesionales \n y técnicos")
     ) + 
   labs(x = "Categoría de ocupación", y = "Cantidad de trabajadores", fill = "") +
-  scale_fill_brewer(palette = "Accent")
+  scale_fill_brewer(palette = "Set1")
 ```
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 \newpage
-```{r, fig.cap = "Distribución de socios según nivel educativo"}
+```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo"}
 gen_ocup %>%
   select(año, b3soc2p:b3soc6tuc) %>%
   group_by(año) %>%
@@ -188,7 +188,7 @@ gen_ocup %>%
   ggplot() +
   geom_bar(aes(x = NivelEducativo, y = Cantidad, fill = NivelEducativo), stat = "identity", position = "dodge") + facet_wrap(~año) + theme(axis.text.x = element_text(angle = 90)) +
   labs(x = "Nivel educativo", y = "Cantidad", fill = "Nivel Educativo") +
-  scale_fill_brewer(palette = "Accent")
+  scale_fill_brewer(palette = "Set1")
   
 ```
 
@@ -196,7 +196,7 @@ En este gráfico de barras se ve la distribución de los socios segun su nivel e
 
 \newpage
 
-```{r, fig.cap = "Distribución de asalariados según nivel educativo"}
+```{r, fig.cap = "Gráfico de barras, cantidad de asalariados según nivel educativo"}
 gen_ocup %>%
   select(año, b3asal2p:b3asal6tuc) %>%
   filter(año == 2) %>% 
@@ -209,14 +209,13 @@ gen_ocup %>%
   gather("NivelEducativo", "Cantidad", -año) %>%
   mutate(NivelEducativo = recode(NivelEducativo, b3asal2p = "Primaria completa", b3asal3si = "Secundaria incompleta", b3asal4sc = "Secundaria completa", b3asal5tui = "Terciaria incompleta", b3asal6tuc = "Terciaria completa")) %>% 
  ggplot() +
-  geom_point(aes(x = Cantidad, y = NivelEducativo, colour = NivelEducativo), size = 4) +
-  geom_segment(aes(x = 0, y = NivelEducativo, xend = Cantidad, yend = NivelEducativo, colour = NivelEducativo), size = 2) +
+  geom_bar(aes(y = Cantidad, x = NivelEducativo, fill = NivelEducativo), stat = "identity") +
    theme(axis.text.x = element_text(vjust = 0.5, size = 8), legend.position = "none") +
   labs(x = "Cantidad", y = "Nivel Educativo", colour = "Nivel Educativo") +
-  coord_flip()
+  scale_fill_brewer(palette = "Set1")
 ```
 
-Al igual que en el grafico anterior, este grafico muestra la distribucion segun el nivel educativo, pero, de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.`
+Al igual que en el grafico anterior, este grafico muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.
 
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
