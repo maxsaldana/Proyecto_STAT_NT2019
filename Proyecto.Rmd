@@ -8,7 +8,7 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.pos = 'hbpt', message = FALSE, warning = FALSE, fig.height = 5)
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'h', message = FALSE, warning = FALSE, fig.height = 5)
 ```
 
 
@@ -139,7 +139,7 @@ opinion %>%
 
 \newpage
 
-En la figura 2 se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
+En la Figura 2 se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
 
 2. Exploración de los socios y asalariados   
 
@@ -222,43 +222,47 @@ Al igual que en el grafico anterior, este grafico muestra la cantidad de persona
 
 La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente innovarían menos porque están recien estableciéndose y no pueden invertir tanto en dicha área.   
 
-```{r, fig.cap = "Serie de tiempo, cantidad de empresas fundadas cada año"}
+```{r, fig.cap = "Serie de tiempo, cantidad de ecooperativas fundadas cada año"}
 inno_arr <- datos %>%
   select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
-  filter(a4 > "1800-01-01" & a4 < "2013-01-01", is.na(g4prod) == FALSE, is.na(g4proc) == FALSE, is.na(g4org) == FALSE, is.na(g4com) == FALSE, cp == 1)
+  filter(a4 > "1800-01-01" & a4 < "2013-01-01", is.na(g4prod) == FALSE, is.na(g4proc) == FALSE, is.na(g4org) == FALSE, is.na(g4com) == FALSE)
 
 inno_arr %>%
-  mutate(a4 = year(a4)) %>%
-  group_by(a4) %>%
+  mutate(a4 = year(a4), cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa")) %>%
+  group_by(a4, cp) %>%
   summarise(n = n()) %>%
   ggplot() +
-  geom_line(aes(x = a4, y = n), color = "green") +
-  labs(x = "Año", y = "Cooperativas fundadas")
+  geom_line(aes(x = a4, y = n, color = cp)) +
+  labs(x = "Año", y = "Organizaciones fundadas", color = "Tipo de organización") +
+  scale_color_brewer(palette = "Set1") 
+  
 ```
-Desde los años 90 hasta antes del 2000 hay un creciemento en el número de cooperativas que iniciaron sus actividades, la abrupta caída en su número se puede deber a la crisis. Posteriormente hay un crecimiento sostenido en dicho número que tal vez se corresponda con crecimiento de la economía en dicho periodo.
+Hay empresas con mas antigüedad que la cooperativa con más años desde su inicio de actividades. Hay una tendencia acelerada de crecimiento en los dos tipos de organizaciones luego del año 2000, la que tal vez se corresponda con crecimiento de la economía en dicho periodo (posterior a la crisis de principios de siglo).
 
 \newpage
 
 ```{r, fig.cap = "Serie de tiempo, proporción de cooperativas que innovaron según su año de inicio de actividades y área de innovación"}
 inno_arr %>%
   gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
-  mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No")) %>%
-  group_by(a4, tipo, hubo) %>%
+  mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No"), cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa"), tipo = recode(tipo, g4com = "Comercialización", g4org = "Organización", g4proc = "Proceso", g4prod = "Producto" )) %>%
+  group_by(a4, cp,  tipo, hubo) %>%
   summarise(n = n()) %>%
   mutate(prop = n/sum(n)) %>%
   filter(hubo != "No") %>%
   ggplot() +
-  geom_line(aes(x = a4, y = prop, color = tipo), size = 1) +
-  labs(x = "Año de inicio de actividades", y = "Proporción de empresas que si innovó", fill = "Tipo de \n innovación") +
+  geom_line(aes(x = a4, y = prop, color = tipo)) +
+  facet_wrap(vars(cp)) + 
+  labs(x = "Año de inicio de actividades", y = "Proporción de empresas que sí innovó", color = "Tipo de \n innovación") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_color_brewer(palette = "Set1")
 ```
 
-A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. Por eso el mapa de calor de la figura ... es más útil para comparar a partir de los años 90 a partir de donde hay un mayor número de cooperativas.  
+A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas empresas y cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. 
 
 
-En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero resultó más conveniente reunir la información en un mapa de calor. En dicho gráfico podemos apreciar que antes de los años 90 hay varios años donde no hubo cooperativas que iniciaran sus actividades. Con excepción de la innovación en organización, no se puede discernir un patrón general así que no podemos confirmar nuestra hipótesis de que las cooperativas más nuevas innovan menos. A pesar de esto el gráfico puede utilizarse para según cada año de inicio de actividades como es el desempeño actual de las cooperativas en cuanto a innovación. En el área de organización se puede apreciar que las empresas cuyas actividades iniciaron antes de 1980 no tuvieron innovaciones en esta área, pero como mencionamos anteriormente el escaso número de empresas de este período hace que no podamos concluir con seguridad que esta es la tendencia.
+En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. En la Figura ... se pueden comparar las distintas proporciones de innovación en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas.  
+
 
 \newpage
 
@@ -323,7 +327,7 @@ dat_5 <- datos %>%
     scale_fill_brewer(palette = "Accent")
 ```
 
-Se puede ver que hay una correspondencia entre aquellos que se reportan muy impacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
+Se puede ver que hay una correspondencia entre aquellos que se reportan muy impacientes o muy pacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
 
 6. Desempeño de las cooperativas por área según su desempeño en otra área
 
@@ -383,45 +387,44 @@ datos %>%
   scale_x_discrete(labels = c("Malo", "Nulo", "Bueno", "Muy bueno")) +
   labs(x = "Resultado de la inversión", y = "Monto de la inversión (escala log10)")
 ```
-Ninguna empresa o cooperativa reporto resultados muy malos  inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
+Ninguna empresa o cooperativa reporto resultados muy malos en sus inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
 \newpage
 
 8. ¿Que tan bien administran las empresas y las cooperativas sus ingresos y gastos?
 
-```{r, fig.cap = "Gráfico de dispersión, desempeño en cuanto a balance de ingresos y gastos"}
+```{r, fig.cap = "Gráfico de dispersión, total de ingresos según inversión"}
 datos %>%
-  select(cp, form, a4, año, e44 , e14) %>%
+  select(cp, form, a4, año, g31inv, g31 , e14) %>%
   mutate(
     a4 = as.Date(a4, format = "%d/%m/%Y"), 
     año = recode(año, `1` = "2010", `2` = "2011"), 
     cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa")
     ) %>%
-  filter(year(a4) < 2000) %>% 
-ggplot(aes(e44, e14)) +
+  filter(year(a4) < 2000, g31 == 1, g31inv > 0, !is.na(g31inv)) %>% #Las empresas nuevas tienen un período en déficit donde están recuperando la inversión
+ggplot(aes(g31inv, e14)) +
   geom_point(color = "mediumseagreen") +
-  geom_abline(aes(intercept = 0, slope = 45)) +
-  facet_grid(vars(cp), vars(año)) + 
+  facet_grid(vars(cp), vars(año)) +
   scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
               labels = trans_format("log10", math_format(10^.x))) +
   scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
               labels = trans_format("log10", math_format(10^.x))) +
-  labs(x = "Total de ingresos", y = "Total de gastos") 
+  labs(x = "Monto de inversión", y = "Total de ingresos") 
  
 ```
-En este gráfico se pueden distinguir las empresas y cooperativas que son más eficientes con su administración de las finanzas. Aquellas que se encuentran por encima de la curva de ajuste tienen un mejor balance que las que están sobre o por debajo de la misma.
+Para las cooperativas los datos resultan escasos para afirmar una relación entre las variables. En la Figura gráfico se puede ver las relación entre el total de inversión de las empresas y su correspondiente nivel de ingresos. No se puede ver una correlación lineal positiva , lo que se podría interpretar como que no es claro que una mayor inversión resulte en un mayor monto de ingresos.
 
 
 # Descripción de la aplicación Shiny
 
-En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
+En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área de el funcionamiento de la actividad económica de la cooperativa según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
 
 # Comentarios finales
 
-Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables, consideramos que pudimos tener una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión y sus finanzas. 
+Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables,  pudimos tener dar una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión e ingresos. 
 
 
-Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. A pesar de que el número de cooperativas con más antigüedad es bajo y esto no nos permite hacer conclusiones fuertes en cuanto a como se comparan con las más nuevas, pudimos ver que hay cierta tendencia a que estás últimas innovan más en organización
+Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. Como el número de empresas y cooperativas con más antigüedad es bajo y esto no nos permite hacer conclusiones fuertes en cuanto a como se comparan con las más nuevas. Cuando analizamos la proporción de encuestados que reportaba el ausentismo como un problema en sus cooperativas vinculado a su nivel de impaciencia nos pareció interesante encontrar que dicha proporción era mayor para los niveles más bajo y más altos de paciencia. Por último, observamos que un mayor monto de inversión no se correlacionó claramente con un mayor monto de ingresos. 
 
 # Anexo
 
@@ -481,7 +484,7 @@ Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un 
 ## 2. Gráficos adicionales de pregunta 3 
 
 
-```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
 inno_arr %>% 
   ggplot() +
    geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4prod)), position = "fill") +
@@ -491,7 +494,7 @@ inno_arr %>%
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4proc)), position = "fill") +
@@ -501,7 +504,7 @@ ggplot(inno_arr) +
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de cooperativa que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4org)), position = "fill") +
@@ -511,7 +514,7 @@ ggplot(inno_arr) +
 
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4com)), position = "fill") +
