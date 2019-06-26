@@ -419,7 +419,10 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 
 # Comentarios finales
 
-Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables, consideramos que pudimos tener una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión y sus finanzas.  
+Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables, consideramos que pudimos tener una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión y sus finanzas. 
+
+
+Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. A pesar de que el número de cooperativas con más antigüedad es bajo y esto no nos permite hacer conclusiones fuertes en cuanto a como se comparan con las más nuevas, pudimos ver que hay cierta tendencia a que estás últimas innovan más en organización
 
 # Anexo
 
