@@ -1,6 +1,7 @@
 library(shiny)
 library(tidyverse)
 library(haven)
+library(shinythemes)
 
 datos <- read_dta("2011_2013panel.dta")
 dat_7 <- datos %>%
@@ -8,7 +9,10 @@ dat_7 <- datos %>%
   mutate(año = as.factor(recode(año, `1` = 2010, `2` = 2011)))
 
 ui <- fluidPage(
-  titlePanel(h3("Mapa de calor", align = "center")),
+  
+  theme = shinytheme("darkly"),
+  
+  titlePanel(h1("Mapa de calor", span(h4("Desempeño de las cooperativas en un área según como es en otra")), align = "center")),
   
   
   plotOutput("heatmap"),
@@ -33,6 +37,7 @@ ui <- fluidPage(
                  "Maquinarias y equipos" = "g15"
               )
    )
+  
   ),
   
   column(4,
@@ -60,12 +65,12 @@ server <- function(input, output) {
     dat_plot <- reactive({
       dat_7 %>%
       filter(año == input$anio) %>%
-      group_by(input$var1, input$var2) %>%
+      group_by(!!sym(input$var1), !!sym(input$var2)) %>%
       summarise(n = n()) %>%
-      mutate(prop = n/sum(n))
+      mutate(prop = round((n/sum(n)), 4))
     })
   
-  ggplot(dat_plot(), aes(x = as.factor(input$var1), y = as.factor(input$var2))) +
+  ggplot(dat_plot(), aes(x = as.factor(!!sym(input$var1)), y = as.factor(!!sym(input$var2)))) +
       geom_tile(aes(fill = prop)) +
       geom_text(aes(label = prop), color = "white") +
       scale_x_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +

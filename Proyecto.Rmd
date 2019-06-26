@@ -194,6 +194,7 @@ gen_ocup %>%
 
 En este gráfico de barras se ve la distribución de los socios segun su nivel educativo. En la gráfica del año 2010, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
 
+\newpage
 
 ```{r, fig.cap = "Distribución de asalariados según nivel educativo"}
 gen_ocup %>%
@@ -238,6 +239,8 @@ inno_arr %>%
 ```
 Desde los años 90 hasta antes del 2000 hay un creciemento en el número de cooperativas que iniciaron sus actividades, la abrupta caída en su número se puede deber a la crisis. Posteriormente hay un crecimiento sostenido en dicho número que tal vez se corresponda con crecimiento de la economía en dicho periodo.
 
+\newpage
+
 ```{r, fig.cap = "Mapa de calor, proporción de innovación de las cooperativas según año de inicio de actividades y área de innovación"}
 inno_arr %>%
   gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
@@ -258,6 +261,7 @@ A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaro
 
 En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero resultó más conveniente reunir la información en un mapa de calor. En dicho gráfico podemos apreciar que antes de los años 90 hay varios años donde no hubo cooperativas que iniciaran sus actividades. Con excepción de la innovación en organización, no se puede discernir un patrón general así que no podemos confirmar nuestra hipótesis de que las cooperativas más nuevas innovan menos. A pesar de esto el gráfico puede utilizarse para según cada año de inicio de actividades como es el desempeño actual de las cooperativas en cuanto a innovación. En el área de organización se puede apreciar que las empresas cuyas actividades iniciaron antes de 1980 no tuvieron innovaciones en esta área, pero como mencionamos anteriormente el escaso número de empresas de este período hace que no podamos concluir con seguridad que esta es la tendencia.
 
+\newpage
 
 4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
 
@@ -280,7 +284,7 @@ gen_ocup %>%
   labs(x = "Número de cooperativas", y = "Frecuencia entre las cooperativas encuestadas")
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results = "hide"}
 gen_ocup %>%
   mutate(tipo_coop = case_when(cp == 1 & is.na(ct) ~ "CP", ct == 1  ~ "CT")) %>%
   filter(a11a1 < 500, a11a2 < 500, a11a3 < 500) %>% #Hay outliers que son posibles errores y afectan mucho la grafica
@@ -292,15 +296,20 @@ gen_ocup %>%
 ```
 
 Resalta como hay un gran número de cooperativas que no colaboran con sus pares. También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son: 
+
 * Impresión de diarios y revistas (una cooperativa)
+
 * Administración y consultoría de empresas (una cooperativa)
+
 * Agentes y corredores de seguros y mantenimiento de vehículos (tres cooperativas)
+
 * Restaurantes y parrilladas (una cooperativa). 
 
 
 5. ¿Aquellos encuestados que se reportan como más impacientes ven más problemas en el ausentismo?
 
 Queremos tener una idea de como características de las personas sesgan sus respuestas. Hay que tener en cuenta que como estas características son autorreportadas van a tener en si misma un sesgo también. Si bien hay cierta ambigüedad en cuanto a que se referían con paciencia los encuestadores, nuestra intuición nos lleva a pensar que los que son más impacientes tienen menos tolerancia con el ausentismo y lo reportarían más como un problema. 
+
 
 ```{r, fig.cap = "Gráfico de barras apiladas, proporción de encuestados que reportan el ausentismo como un problema según su nivel de paciencia (donde 0 es poco paciente y 10 es muy paciente)"}
 dat_5 <- datos %>%
@@ -356,6 +365,10 @@ dat_7 %>%
 ```
 Se puede ver que no hay cooperativas cuya situación en capacitación de personal en comparación a empresas pares sea mucho peor y que además su capacidad de producción sea mucho mejor. La mayoría de las empresas que se consideran en igualdad de condiciones en un área se considera en la misma situación en la otra área. Algo similar pasa cuando cruzamos las variables de situación en maquinaria y equipos y capacidad de producción.  
 
+
+\newpage
+
+
 7. Relación entre monto de la inversión y el resultado
 
 ```{r, fig.cap = "Gráfico de cajas, distribución de las inversiones en los últimos 3 años de empresas y cooperativas según el resultado de la misma"}
@@ -373,7 +386,9 @@ datos %>%
 ```
 Ninguna empresa o cooperativa reporto resultados muy malos  inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
-8. ¿Que también administran las empresas y las cooperativas sus ingresos y gastos?
+\newpage
+
+8. ¿Que tan bien administran las empresas y las cooperativas sus ingresos y gastos?
 
 ```{r, fig.cap = "Gráfico de dispersión, desempeño en cuanto a balance de ingresos y gastos"}
 datos %>%
@@ -460,7 +475,9 @@ Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de vari
 
 
 
+
 ## 2. Gráficos adicionales de pregunta 3 
+
 
 ```{r, fig.cap = "Gráfico de barras, proporción de cooperativas que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
 inno_arr %>% 
