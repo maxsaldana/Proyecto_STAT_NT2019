@@ -240,7 +240,7 @@ Desde los años 90 hasta antes del 2000 hay un creciemento en el número de coop
 
 \newpage
 
-```{r, fig.cap = "Mapa de calor, proporción de innovación de las cooperativas según año de inicio de actividades y área de innovación"}
+```{r, fig.cap = "Serie de tiempo, proporción de cooperativas que innovaron según su año de inicio de actividades y área de innovación"}
 inno_arr %>%
   gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No")) %>%
@@ -249,10 +249,10 @@ inno_arr %>%
   mutate(prop = n/sum(n)) %>%
   filter(hubo != "No") %>%
   ggplot() +
-  geom_tile(aes(x = as.factor(a4), y = tipo, fill = prop)) +
-  scale_y_discrete(labels = c("Producto", "Proceso", "Organización", "Comercialización")) + 
-  labs(x = "Año de inicio de actividades", y = "Área de innovación", fill = "Proporción de \n empresas \n que innovaron") +
-  theme(axis.text.x = element_text(angle = 90))
+  geom_line(aes(x = a4, y = prop, color = tipo), size = 1) +
+  labs(x = "Año de inicio de actividades", y = "Proporción de empresas que si innovó", fill = "Tipo de \n innovación") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_color_brewer(palette = "Set1")
 ```
 
 A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. Por eso el mapa de calor de la figura ... es más útil para comparar a partir de los años 90 a partir de donde hay un mayor número de cooperativas.  
