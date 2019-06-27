@@ -1,10 +1,12 @@
+
 library(shiny)
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
 library(haven)
 library(shinythemes)
 
 datos <- read_dta("2011_2013panel.dta")
-dat_7 <- datos %>%
+  dat_7 <- datos %>%
   select(form, año, g11, g12, g13, g14, g15) %>%
   mutate(año = as.factor(recode(año, `1` = 2010, `2` = 2011)))
 
@@ -12,7 +14,7 @@ ui <- fluidPage(
   
   theme = shinytheme("darkly"),
   
-  titlePanel(h1("Mapa de calor", span(h4("Desempeño de las cooperativas en un área según como es en otra")), align = "center")),
+  titlePanel(h1("Mapa de calor", span(h5("Proporción de los desempeños de las cooperativas en un área  en relación a otra")), align = "center")),
   
   
   plotOutput("heatmap"),
@@ -51,16 +53,23 @@ ui <- fluidPage(
                 )
    )                   
   )
-)
+),
+
+tags$a(href = "http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/", h5("Fuente: Encuesta a cooperativas de producción (IECON, 2010-2011)"))
  
    
 
 )
 
-
 server <- function(input, output) {
   
   output$heatmap <- renderPlot({
+    
+    etiqs <- c("Tecnología" = "g11",
+                  "Capacidad de producción" = "g12",
+                  "Marketing/Comercialización" = "g13",
+                  "Capacitación de personal" = "g14",
+                  "Maquinarias y equipos" = "g15")
     
     dat_plot <- reactive({
       dat_7 %>%
@@ -75,8 +84,10 @@ server <- function(input, output) {
       geom_text(aes(label = prop), color = "white") +
       scale_x_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
       scale_y_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
-      labs(x = "", y = "", fill = "Proporción")
+      labs(x = names(etiqs)[etiqs == input$var1], y = names(etiqs)[etiqs == input$var2], fill = "Proporción") +
+      theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12))
   })
+
 }
 
 shinyApp(ui, server)

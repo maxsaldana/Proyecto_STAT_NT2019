@@ -87,7 +87,7 @@ La fuente de los datos es la base de datos del IECON (Instituto de Economía de 
 
 Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad). Un problema que encontramos fue que los datos del primer año de la encuesta contaban con observaciones faltantes, resultado de algunos cambios en las encuestas. Adicionalmente, había inconsistencias de cuales habían sido los años de la encuesta en los datos respecto al informe de la investigación, ante lo cual optamos por usar los años indicados en el informe (2010 y 2011). Las preguntas de la base de datos original se dividían en 693 variables, muchas representando observaciones de una variable y que organizamos como tal para trabajar con ellas. En el anexo está disponible el listado de todas las variables que inicialmente seleccionamos de la base de datos.
 
-[^1]: http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/
+[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/] (http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/)
 
 
 # Análisis exploratorio
