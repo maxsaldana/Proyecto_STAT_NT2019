@@ -143,7 +143,7 @@ En la Figura \ref{bargen} se puede distinguir claramente que la mayoría de los 
 
 2. Exploración de los socios y asalariados   
 
-```{r, fig.cap = "Gráfico de barras, cantidad de trabajadores según categoría de ocupación y si son asalariados o socios de la cooperativa"}
+```{r, fig.cap = "Gráfico de barras, cantidad de trabajadores según categoría de ocupación y si son asalariados o socios de la cooperativa\\label{bartrab}"}
 gen_ocup %>%
   gather("categoria", "ocup", b2SOC1:b2SOC6, b2ASAL1:b2ASAL6) %>%
   filter(!is.na(categoria), cp == 1) %>%
@@ -173,7 +173,7 @@ gen_ocup %>%
 ```
 
 
-La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
+La única categoría de la Figura \ref{bartrab} donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 
 ```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo\\label{bared}"}
@@ -218,14 +218,14 @@ gen_ocup %>%
 ```
 
 
-Al igual que en el grafico anterior, este grafico muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.
+Al igual que en el gráfico anterior, este muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que esta variable no fue relevada en el primero.
 
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
 
 La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente innovarían menos porque están recien estableciéndose y no pueden invertir tanto en dicha área.   
 
-```{r, fig.cap = "Serie de tiempo, cantidad de ecooperativas fundadas cada año"}
+```{r, fig.cap = "Serie de tiempo, cantidad de ecooperativas fundadas cada año\\label{serfund}"}
 inno_arr <- datos %>%
   select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
@@ -243,10 +243,10 @@ inno_arr %>%
 ```
 
 
-Hay empresas con mas antigüedad que la cooperativa con más años desde su inicio de actividades. Hay una tendencia acelerada de crecimiento en los dos tipos de organizaciones luego del año 2000, la que tal vez se corresponda con crecimiento de la economía en dicho periodo (posterior a la crisis de principios de siglo).
+Hay empresas con mas antigüedad que la cooperativa con más años desde su inicio de actividades. En la Figura \ref{serfund}  tendencia acelerada de crecimiento en los dos tipos de organizaciones luego del año 2000, la que tal vez se corresponda con crecimiento de la economía en dicho periodo (posterior a la crisis de principios de siglo).
 
 
-```{r, fig.cap = "Serie de tiempo, proporción de cooperativas que innovaron según su año de inicio de actividades y área de innovación"}
+```{r, fig.cap = "Serie de tiempo, proporción de cooperativas que innovaron según su año de inicio de actividades y área de innovación\\label{serfund2}"}
 inno_arr %>%
   gather("tipo", "hubo", g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = year(a4), hubo = recode(hubo, `1` = "Sí", `2` = "No"), cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa"), tipo = recode(tipo, g4com = "Comercialización", g4org = "Organización", g4proc = "Proceso", g4prod = "Producto" )) %>%
@@ -266,7 +266,7 @@ inno_arr %>%
 A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas empresas y cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. 
 
 
-En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. En la Figura ... se pueden comparar las distintas proporciones de innovación en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas.  
+En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. En la Figura \ref{serfund2} se pueden comparar las distintas proporciones de organizaciones que si innovaron en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas.  
 
 
 4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
@@ -319,7 +319,7 @@ Resalta como hay un gran número de cooperativas que no colaboran con sus pares.
 Queremos tener una idea de como características de las personas sesgan sus respuestas. Hay que tener en cuenta que como estas características son autorreportadas van a tener en si misma un sesgo también. Si bien hay cierta ambigüedad en cuanto a que se referían con paciencia los encuestadores, nuestra intuición nos lleva a pensar que los que son más impacientes tienen menos tolerancia con el ausentismo y lo reportarían más como un problema. 
 
 
-```{r, fig.cap = "Gráfico de barras apiladas, proporción de encuestados que reportan el ausentismo como un problema según su nivel de paciencia (donde 0 es poco paciente y 10 es muy paciente)"}
+```{r, fig.cap = "Gráfico de barras apiladas, proporción de encuestados que reportan el ausentismo como un problema según su nivel de paciencia (donde 0 es poco paciente y 10 es muy paciente)\\label{aus}"}
 dat_5 <- datos %>%
   select(form, año, f3, h5pacienci, h1posturaa, h89sexo) %>%
   filter(año == 2, is.na(f3) == FALSE, is.na(h5pacienci) == FALSE ) %>%
@@ -333,7 +333,7 @@ dat_5 <- datos %>%
 ```
 
 
-Se puede ver que hay una correspondencia entre aquellos que se reportan muy impacientes o muy pacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
+En la Figura \ref{aus} se aprecia una correspondencia entre aquellos que se reportan muy impacientes o muy pacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
 
 6. Desempeño de las cooperativas por área según su desempeño en otra área
 
@@ -399,9 +399,9 @@ datos %>%
 Ninguna empresa o cooperativa reporto resultados muy malos en sus inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
 
-8. ¿Que tan bien administran las empresas y las cooperativas sus ingresos y gastos?
+8. ¿Las organizaciones que invierten más tienen más ingresos?
 
-```{r, fig.cap = "Gráfico de dispersión, total de ingresos según inversión"}
+```{r, fig.cap = "Gráfico de dispersión, total de ingresos según inversión\\label{inving}"}
 datos %>%
   select(cp, form, a4, año, g31inv, g31 , e14) %>%
   mutate(
@@ -422,7 +422,7 @@ ggplot(aes(g31inv, e14)) +
 ```
 
 
-Para las cooperativas los datos resultan escasos para afirmar una relación entre las variables. En la Figura gráfico se puede ver las relación entre el total de inversión de las empresas y su correspondiente nivel de ingresos. No se puede ver una correlación lineal positiva , lo que se podría interpretar como que no es claro que una mayor inversión resulte en un mayor monto de ingresos.
+Para las cooperativas los datos resultan escasos para afirmar una relación entre las variables. En la Figura \ref{inving}  se observa las relación entre el total de inversión de las empresas y su correspondiente nivel de ingresos. No se puede ver una correlación lineal positiva , lo que se podría interpretar como que no es claro que una mayor inversión resulte en un mayor monto de ingresos.
 
 
 # Descripción de la aplicación Shiny
