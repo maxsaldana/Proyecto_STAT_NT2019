@@ -90,8 +90,6 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 [^1]: http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/
 
 
-\newpage
-
 # Análisis exploratorio
 
 1. Descripción de los encuestados
@@ -111,6 +109,8 @@ gen_ocup %>%
   theme(axis.text.x = element_text(size = 7)) +
   labs(x = "Cargo", y = "Frecuencia") 
 ```
+
+
 Los directivos/propietarios conformaban la mayoría de los encuestados tanto en las cooperativas como en las empresas convencionales. Los que entraban en la categoría otros son una parte considerable de los encuestados en los dos grupos de organizaciones, pero no tenemos información disponibles sobre qué posiciones conforman dicha categoría
 
 ```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados"}
@@ -124,7 +124,8 @@ opinion %>%
   geom_text(aes(x = h84educaci, y = (..count..), label = (..count..)), stat = "count", hjust = -.5) + ylim(0, 200)
 ```
 
-```{r, fig.cap = "Gráfico de barras, proporción de los sexos de los encuestados en cada nivel educativo"}
+
+```{r, fig.cap = "Gráfico de barras, proporción de los sexos de los encuestados en cada nivel educativo\\label{bargen}"}
 opinion %>%
   filter(is.na(h89sexo) == FALSE) %>%
   mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
@@ -137,9 +138,8 @@ opinion %>%
   labs(x = "Nivel educativo", y = "Número de personas", fill = "Sexo") 
 ```
 
-\newpage
 
-En la Figura 2 se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
+En la Figura \ref{bargen} se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
 
 2. Exploración de los socios y asalariados   
 
@@ -171,10 +171,12 @@ gen_ocup %>%
   labs(x = "Categoría de ocupación", y = "Cantidad de trabajadores", fill = "") +
   scale_fill_brewer(palette = "Set1")
 ```
+
+
 La única categoría donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
-\newpage
-```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo"}
+
+```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo\\label{bared}"}
 gen_ocup %>%
   select(año, b3soc2p:b3soc6tuc) %>%
   group_by(año) %>%
@@ -192,9 +194,9 @@ gen_ocup %>%
   
 ```
 
-En este gráfico de barras se ve la distribución de los socios segun su nivel educativo. En la gráfica del año 2010, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
 
-\newpage
+En el gráfico de barras de la Figura \ref{bared} se ve la distribución de los socios segun su nivel educativo. En la gráfica del año 2010, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
+
 
 ```{r, fig.cap = "Gráfico de barras, cantidad de asalariados según nivel educativo"}
 gen_ocup %>%
@@ -214,6 +216,7 @@ gen_ocup %>%
   labs(x = "Cantidad", y = "Nivel Educativo", colour = "Nivel Educativo") +
   scale_fill_brewer(palette = "Set1")
 ```
+
 
 Al igual que en el grafico anterior, este grafico muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que en el primero, no se preguntó.
 
@@ -238,9 +241,10 @@ inno_arr %>%
   scale_color_brewer(palette = "Set1") 
   
 ```
+
+
 Hay empresas con mas antigüedad que la cooperativa con más años desde su inicio de actividades. Hay una tendencia acelerada de crecimiento en los dos tipos de organizaciones luego del año 2000, la que tal vez se corresponda con crecimiento de la economía en dicho periodo (posterior a la crisis de principios de siglo).
 
-\newpage
 
 ```{r, fig.cap = "Serie de tiempo, proporción de cooperativas que innovaron según su año de inicio de actividades y área de innovación"}
 inno_arr %>%
@@ -258,13 +262,12 @@ inno_arr %>%
   scale_color_brewer(palette = "Set1")
 ```
 
+
 A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas empresas y cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. 
 
 
 En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. En la Figura ... se pueden comparar las distintas proporciones de innovación en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas.  
 
-
-\newpage
 
 4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
 
@@ -286,6 +289,8 @@ gen_ocup %>%
   facet_wrap(vars(tipo_colab)) +
   labs(x = "Número de cooperativas", y = "Frecuencia entre las cooperativas encuestadas")
 ```
+
+
 
 ```{r, echo = FALSE, results = "hide"}
 gen_ocup %>%
@@ -324,8 +329,9 @@ dat_5 <- datos %>%
   ggplot(dat_5) +
     geom_bar(aes(x = as.factor(h5pacienci), fill = as.factor(f3)), position = "fill") +
     labs(x = "Nivel de paciencia", y = "Proporción", fill = "¿Es el ausentismo \n un problema \n en su cooperativa?") +
-    scale_fill_brewer(palette = "Accent")
+    scale_fill_brewer(palette = "Set1")
 ```
+
 
 Se puede ver que hay una correspondencia entre aquellos que se reportan muy impacientes o muy pacientes y quienes reportan que el ausentismo es un problema en su cooperativa. Claramente no podemos afirmar causalidad y además hay muchos factores que no estamos tomando en cuenta, pero nos parece interesante esta correspondencia.
 
@@ -350,6 +356,8 @@ dat_7 %>%
   labs(x = "Capacitación de personal", y = "Capacidad de producción", fill = "Proporción")
 ```
 
+
+
 ```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en maquinaria y equipos, año 2010"}
 dat_7 <- datos %>%
   select(form, año, g11, g12, g13, g14, g15) 
@@ -366,10 +374,9 @@ dat_7 %>%
   scale_y_discrete(labels = c("Mucho peor", "Peor", "Igual", "Mejor", "Mucho mejor")) +
   labs(x = "Maquinaria y equipos", y = "Capacidad de producción", fill = "Proporción")
 ```
+
+
 Se puede ver que no hay cooperativas cuya situación en capacitación de personal en comparación a empresas pares sea mucho peor y que además su capacidad de producción sea mucho mejor. La mayoría de las empresas que se consideran en igualdad de condiciones en un área se considera en la misma situación en la otra área. Algo similar pasa cuando cruzamos las variables de situación en maquinaria y equipos y capacidad de producción.  
-
-
-\newpage
 
 
 7. Relación entre monto de la inversión y el resultado
@@ -387,9 +394,10 @@ datos %>%
   scale_x_discrete(labels = c("Malo", "Nulo", "Bueno", "Muy bueno")) +
   labs(x = "Resultado de la inversión", y = "Monto de la inversión (escala log10)")
 ```
+
+
 Ninguna empresa o cooperativa reporto resultados muy malos en sus inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
-\newpage
 
 8. ¿Que tan bien administran las empresas y las cooperativas sus ingresos y gastos?
 
@@ -412,6 +420,8 @@ ggplot(aes(g31inv, e14)) +
   labs(x = "Monto de inversión", y = "Total de ingresos") 
  
 ```
+
+
 Para las cooperativas los datos resultan escasos para afirmar una relación entre las variables. En la Figura gráfico se puede ver las relación entre el total de inversión de las empresas y su correspondiente nivel de ingresos. No se puede ver una correlación lineal positiva , lo que se podría interpretar como que no es claro que una mayor inversión resulte en un mayor monto de ingresos.
 
 
@@ -494,6 +504,7 @@ inno_arr %>%
 
 ```
 
+
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
@@ -504,6 +515,7 @@ ggplot(inno_arr) +
 
 ```
 
+
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
 
 ggplot(inno_arr) +
@@ -513,6 +525,7 @@ ggplot(inno_arr) +
    theme(axis.text.x = element_text(angle = 90)) 
 
 ```
+
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
 
