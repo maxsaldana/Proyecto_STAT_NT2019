@@ -1,14 +1,13 @@
 ---
-title: "Proyecto"
+title: "Proyecto de Nuevas tecnologías de análisis estadístico de datos"
 author: "Santiago Burgoa, Pablo Deleón, Maximiliano Saldaña"
 date: "8 de junio de 2019"
 output: pdf_document
-header-includes:
- \usepackage{float}
+
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.pos = 'h', message = FALSE, warning = FALSE, fig.height = 5)
+knitr::opts_chunk$set(echo = FALSE, tidy.opts = list(width.cutoff = 55), tidy = TRUE, fig.pos = 'hbpt', out.extra = '', message = FALSE, message = 'hide', warning = FALSE)
 ```
 
 
@@ -82,12 +81,13 @@ Haremos uso del software R y diversos paquetes para procesar y visualizar los da
 
 # Datos
 
-La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción. [^1] Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales.  Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
+La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción.[^1] Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales.  Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
 
 
 Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad). Un problema que encontramos fue que los datos del primer año de la encuesta contaban con observaciones faltantes, resultado de algunos cambios en las encuestas. Adicionalmente, había inconsistencias de cuales habían sido los años de la encuesta en los datos respecto al informe de la investigación, ante lo cual optamos por usar los años indicados en el informe (2010 y 2011). Las preguntas de la base de datos original se dividían en 693 variables, muchas representando observaciones de una variable y que organizamos como tal para trabajar con ellas. En el anexo está disponible el listado de todas las variables que inicialmente seleccionamos de la base de datos.
 
-[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/] (http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/)
+[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/](http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/)
+
 
 
 # Análisis exploratorio
@@ -98,7 +98,7 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 
 gen_ocup %>%
   filter(is.na(a22cargo) == FALSE) %>%
-  mutate(a22cargo = recode(a22cargo, `1` = "Directivo/Propietario", `2` = "Gerente/ \n Administrador general", `3` = "Contador", `4` = "Jefe de \n producción", `5` = "Otro"), cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
+  mutate(a22cargo = recode(a22cargo, `1` = "Directivo/Propietario", `2` = "Gerente/ \n Administrador \n general", `3` = "Contador", `4` = "Jefe de \n producción", `5` = "Otro"), cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
   group_by(cp, a22cargo) %>%
   summarise(Frecuencia = n()) %>%
   ggplot(aes(x = reorder(a22cargo, -Frecuencia))) +
@@ -111,9 +111,11 @@ gen_ocup %>%
 ```
 
 
+
 Los directivos/propietarios conformaban la mayoría de los encuestados tanto en las cooperativas como en las empresas convencionales. Los que entraban en la categoría otros son una parte considerable de los encuestados en los dos grupos de organizaciones, pero no tenemos información disponibles sobre qué posiciones conforman dicha categoría
 
-```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados"}
+
+```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados", warning = FALSE}
 opinion %>%
   filter(is.na(h89sexo) == FALSE) %>%  #En el primer anio no se pregunto
   ggplot() +
@@ -140,6 +142,8 @@ opinion %>%
 
 
 En la Figura \ref{bargen} se puede distinguir claramente que la mayoría de los encuestados posee una educación terciaria o universitaria. Esto puede estar relacionado con el hecho de que los encuestados ocupan cargos de gestión en la mayoría de los casos y estos requieren mayor formación. El grupo de personas con nivel educativo de primaria terminada está dividido parejamente entre hombres y mujeres. El grupo de personas con secundaria completa y de personas con educación terciaria/universitaria completa tiene distribuciones muy similares entre si, ocurriendo lo mismo entre los grupos con secundaria incompleta y educación terciaria/universitaria incompleta. 
+
+
 
 2. Exploración de los socios y asalariados   
 
@@ -235,8 +239,9 @@ inno_arr %>%
   mutate(a4 = year(a4), cp = recode(cp, `0` = "Empresa convencional", `1` = "Cooperativa")) %>%
   group_by(a4, cp) %>%
   summarise(n = n()) %>%
-  ggplot() +
-  geom_line(aes(x = a4, y = n, color = cp)) +
+  ggplot(aes(x = a4, y = n, color = cp)) +
+  geom_line() +
+  geom_point()+ 
   labs(x = "Año", y = "Organizaciones fundadas", color = "Tipo de organización") +
   scale_color_brewer(palette = "Set1") 
   
@@ -253,20 +258,21 @@ inno_arr %>%
   group_by(a4, cp,  tipo, hubo) %>%
   summarise(n = n()) %>%
   mutate(prop = n/sum(n)) %>%
-  filter(hubo != "No") %>%
-  ggplot() +
-  geom_line(aes(x = a4, y = prop, color = tipo)) +
-  facet_wrap(vars(cp)) + 
+  filter(hubo != "No", a4 > 1975) %>%
+  ggplot(aes(x = a4, y = prop, color = tipo) ) +
+  geom_line(alpha = 1/3) +
+  geom_point() +
+  facet_wrap(vars(cp), ncol = 1) + 
   labs(x = "Año de inicio de actividades", y = "Proporción de empresas que sí innovó", color = "Tipo de \n innovación") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_color_brewer(palette = "Set1")
 ```
 
+A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas empresas y cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. Por eso en la Figura \ref{serfund2} tomamos en cuenta las empresas que iniciaron sus actividades a partir de 1975
 
-A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaron sus actividades muy pocas empresas y cooperativas, por lo que la tendencia a la innovación va a ser muy afectada por cada una de ellas. Mientras hay años donde hay un número mayor de cooperativas y cada una de ellas tiene menos influencia sobre la tendencia a la innovación, como es el caso de las que iniciaron sus actividades a partir del año 2010 en adelante. La comparación va a ser mejor para los años donde se cierta estabilidad en la cantidad de empresas fundadas. 
 
 
-En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. En la Figura \ref{serfund2} se pueden comparar las distintas proporciones de organizaciones que si innovaron en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas.  
+En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. Con la excepción de la Figura \ref{refi}, que muestra la proporción de innovación en el área producto, parecería que las cooperativas y empresas más nuevas innovaron menos, lo que puede que se haya dado porque están lidiando con sus costos de la inversión y no pueden dedicar tanto a la innovación. En la Figura \ref{serfund2} se pueden comparar las distintas proporciones de organizaciones que si innovaron en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas, pero tiempo antes de que se marque esto hay una gran variabilidad en la proporción de empresas que si innovaron.  
 
 
 4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
@@ -434,7 +440,7 @@ En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisi
 Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables,  pudimos tener dar una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión e ingresos. 
 
 
-Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. Como el número de empresas y cooperativas con más antigüedad es bajo y esto no nos permite hacer conclusiones fuertes en cuanto a como se comparan con las más nuevas. Cuando analizamos la proporción de encuestados que reportaba el ausentismo como un problema en sus cooperativas vinculado a su nivel de impaciencia nos pareció interesante encontrar que dicha proporción era mayor para los niveles más bajo y más altos de paciencia. Por último, observamos que un mayor monto de inversión no se correlacionó claramente con un mayor monto de ingresos. 
+Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. Como el número de empresas y cooperativas con más antigüedad es bajo y esto no nos permite hacer comparaciones entre empresas con una diferencia de muchos años de su inicio de actividades. Los datos muestran que hay cierta tendencia de que dentro de als cooperativas activas posteriormente al año 1975 las cooperativas más nuevas no innovan tanto como las más antiguas.  Cuando analizamos la proporción de encuestados que reportaba el ausentismo como un problema en sus cooperativas vinculado a su nivel de impaciencia nos pareció interesante encontrar que dicha proporción era mayor para los niveles más bajo y más altos de paciencia. Por último, observamos que un mayor monto de inversión no se correlacionó claramente con un mayor monto de ingresos. 
 
 # Anexo
 
@@ -494,45 +500,48 @@ Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un 
 ## 2. Gráficos adicionales de pregunta 3 
 
 
-```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades"}
+```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades\\label{refi}"}
 inno_arr %>% 
+  filter(a4 > 1975) %>%
   ggplot() +
    geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4prod)), position = "fill") +
    scale_fill_discrete(labels = c("Si", "No" )) +
    labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en producto?") +
-   theme(axis.text.x = element_text(angle = 90)) 
+   theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
 
 ```
 
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
-
-ggplot(inno_arr) +
+inno_arr %>% 
+  filter(a4 > 1975) %>%
+ggplot() +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4proc)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en proceso?") +
-   theme(axis.text.x = element_text(angle = 90)) 
-
+   theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
 ```
 
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
-
-ggplot(inno_arr) +
+inno_arr %>% 
+  filter(a4 >1975) %>%
+ggplot() +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4org)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en organización?") +
-   theme(axis.text.x = element_text(angle = 90)) 
+   theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
 
 ```
 
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
-
-ggplot(inno_arr) +
+inno_arr %>% 
+  filter(a4 >1975) %>%
+ggplot() +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4com)), position = "fill") +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en comercialización?") +
-   theme(axis.text.x = element_text(angle = 90)) 
+   theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
 
 ```

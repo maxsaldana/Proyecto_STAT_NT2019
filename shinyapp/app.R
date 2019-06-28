@@ -4,11 +4,11 @@ library(ggplot2)
 library(dplyr)
 library(haven)
 library(shinythemes)
-
-datos <- read_dta("2011_2013panel.dta")
+library(readr)
+datos <- read_csv("datos.csv")
   dat_7 <- datos %>%
-  select(form, año, g11, g12, g13, g14, g15) %>%
-  mutate(año = as.factor(recode(año, `1` = 2010, `2` = 2011)))
+  select(form, ano, g11, g12, g13, g14, g15) %>%
+  mutate(ano = as.factor(recode(ano, `1` = 2010, `2` = 2011)))
 
 ui <- fluidPage(
   
@@ -73,7 +73,7 @@ server <- function(input, output) {
     
     dat_plot <- reactive({
       dat_7 %>%
-      filter(año == input$anio) %>%
+      filter(ano == input$anio) %>%
       group_by(!!sym(input$var1), !!sym(input$var2)) %>%
       summarise(n = n()) %>%
       mutate(prop = round((n/sum(n)), 4))
