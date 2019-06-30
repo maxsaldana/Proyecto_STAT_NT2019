@@ -71,22 +71,27 @@ TraDej <- datos %>%
 
 # Introducción
 
-La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en colaboración con ANII e INACOOP en los años 2010 y 2011. Dicha investigación fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. La modalidad era mediante un formulario que se completaba en base a las respuestas de personal de las empresas y cooperativas que generalmente ocupaban cargos de gestión (directivos, propietarios, gerentes, administradores, etc.). 
+La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON[^1] en colaboración con ANII[^2] e INACOOP[^3] en los años 2010 y 2011. Dicha investigación fue realizada con la intención de recabar información sobre aspectos cuantitativos y cualitativos del funcionar de cooperativas de trabajadores en Uruguay. Adicionalmente se encuestó a empresas convencionales para tener un grupo de control. La modalidad era mediante un formulario que se completaba en base a las respuestas de personal de las empresas y cooperativas que generalmente ocupaban cargos de gestión (directivos, propietarios, gerentes, administradores, etc.). 
 
 Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica. 
 
 
 Haremos uso del software R y diversos paquetes para procesar y visualizar los datos para interpretarlos. Entre las herramientas que usaremos está el paquete Shiny, que nos servirá para presentar parte de nuestro analisis en un formato de fácil uso y accesibilidad, una aplicación web interactiva. Agradecemos la información adicional sobre la encuesta suministrada por Andrés Dean.
 
+[^1]: Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República.
+
+[^2]: Agencia Nacional de Ivestigación e Innovación.
+
+[^3]: Instituto Nacional del Cooperativismo. 
 
 # Datos
 
-La fuente de los datos es la base de datos del IECON (Instituto de Economía de la Facultad de Ciencias Económicas y Administración de la Universidad de la República), donde se encuentran los resultados de la Encuesta a Cooperativas de Producción.[^1] Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales.  Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
+La fuente de los datos es la base de datos del IECON , donde se encuentran los resultados de la Encuesta a Cooperativas de Producción.[^4] Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales.  Adicionalmente Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, nos suministró de los cuestionarios y el informe de la misma lo cual nos fue útil para comprender el transfondo de la investigación y el significado de los datos.
 
 
 Los datos cuentan tanto con variables cualitativas como cuantitativas. En las primeras hay un énfasis en la percepción de los encuestados sobre sus cooperativas/empresas mientras que en las segundas se reflejan valores numéricos (por ejemplo: montos de inversión y cantidades de socios según edad). Un problema que encontramos fue que los datos del primer año de la encuesta contaban con observaciones faltantes, resultado de algunos cambios en las encuestas. Adicionalmente, había inconsistencias de cuales habían sido los años de la encuesta en los datos respecto al informe de la investigación, ante lo cual optamos por usar los años indicados en el informe (2010 y 2011). Las preguntas de la base de datos original se dividían en 693 variables, muchas representando observaciones de una variable y que organizamos como tal para trabajar con ellas. En el anexo está disponible el listado de todas las variables que inicialmente seleccionamos de la base de datos.
 
-[^1]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/](http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/)
+[^4]: [http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/](http://www.iecon.ccee.edu.uy/bases-de-datos/contenido/300/es/)
 
 
 
@@ -94,7 +99,7 @@ Los datos cuentan tanto con variables cualitativas como cuantitativas. En las pr
 
 1. Descripción de los encuestados
 
-```{r, fig.cap = "Gráfico de barras, cantidad de encuestados según su cargo, dividido en cooperativas y empresas convencionales"}
+```{r, fig.cap = "Gráfico de barras, cantidad de encuestados según su cargo, dividido en cooperativas y empresas convencionales\\label{primref}"}
 
 gen_ocup %>%
   filter(is.na(a22cargo) == FALSE) %>%
@@ -112,7 +117,7 @@ gen_ocup %>%
 
 
 
-Los directivos/propietarios conformaban la mayoría de los encuestados tanto en las cooperativas como en las empresas convencionales. Los que entraban en la categoría otros son una parte considerable de los encuestados en los dos grupos de organizaciones, pero no tenemos información disponibles sobre qué posiciones conforman dicha categoría
+Los directivos/propietarios conformaban la mayoría de los encuestados tanto en las cooperativas como en las empresas convencionales (Figura \ref{primref}). Los que entraban en la categoría otros son una parte considerable de los encuestados en los dos grupos de organizaciones, pero no tenemos información disponibles sobre qué posiciones conforman dicha categoría
 
 
 ```{r, fig.cap = "Gráfico de barras, nivel educativo de los encuestados", warning = FALSE}
@@ -127,7 +132,7 @@ opinion %>%
 ```
 
 
-```{r, fig.cap = "Gráfico de barras, proporción de los sexos de los encuestados en cada nivel educativo\\label{bargen}"}
+```{r, fig.cap = "Gráfico de barras, proporción de los sexos de los encuestados en cada nivel educativo\\label{bargen}", warning=FALSE, error=FALSE, message=FALSE}
 opinion %>%
   filter(is.na(h89sexo) == FALSE) %>%
   mutate(h89sexo = recode(h89sexo, `1` = "Masculino", `2` = "Femenino")) %>%
@@ -182,7 +187,8 @@ La única categoría de la Figura \ref{bartrab} donde los asalariado superan nú
 
 ```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo\\label{bared}"}
 gen_ocup %>%
-  select(año, b3soc2p:b3soc6tuc) %>%
+  select(cp, año, b3soc2p:b3soc6tuc) %>%
+  filter(cp == 1) %>%
   group_by(año) %>%
   summarise(b3soc2p = sum(b3soc2p, na.rm = T),
             b3soc3si = sum(b3soc3si, na.rm = T),
@@ -202,27 +208,30 @@ gen_ocup %>%
 En el gráfico de barras de la Figura \ref{bared} se ve la distribución de los socios segun su nivel educativo. En la gráfica del año 2010, no se tuvo en cuenta la información sobre las personas que tienen secundaria o educacion terciaria incompleta, por eso no aparecen. 
 
 
-```{r, fig.cap = "Gráfico de barras, cantidad de asalariados según nivel educativo"}
+```{r, fig.cap = "Gráfico de barras, cantidad de asalariados de las cooperativas según nivel educativo\\label{barwrap}"}
 gen_ocup %>%
-  select(año, b3asal2p:b3asal6tuc) %>%
+  select(cp, año, b3asal2p:b3asal6tuc) %>%
   filter(año == 2) %>% 
-  group_by(año) %>%
+  mutate(cp = recode(cp , `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
+  group_by(cp, año) %>%
   summarise(b3asal2p = sum(b3asal2p, na.rm = T),
             b3asal3si = sum(b3asal3si, na.rm = T),
             b3asal4sc = sum(b3asal4sc, na.rm = T),
             b3asal5tui = sum(b3asal5tui, na.rm = T),
             b3asal6tuc = sum(b3asal6tuc, na.rm = T)) %>%
-  gather("NivelEducativo", "Cantidad", -año) %>%
+  gather("NivelEducativo", "Cantidad", -c(año, cp)) %>%
   mutate(NivelEducativo = recode(NivelEducativo, b3asal2p = "Primaria completa", b3asal3si = "Secundaria incompleta", b3asal4sc = "Secundaria completa", b3asal5tui = "Terciaria incompleta", b3asal6tuc = "Terciaria completa")) %>% 
  ggplot() +
   geom_bar(aes(y = Cantidad, x = NivelEducativo, fill = NivelEducativo), stat = "identity") +
+  facet_wrap(vars(cp), scales = "free") +
+  coord_flip() +
    theme(axis.text.x = element_text(vjust = 0.5, size = 8), legend.position = "none") +
-  labs(x = "Cantidad", y = "Nivel Educativo", colour = "Nivel Educativo") +
-  scale_fill_brewer(palette = "Set1")
+  labs(y = "Cantidad", x = "Nivel Educativo", colour = "Nivel Educativo") +
+  scale_fill_brewer(palette = "Set1") 
 ```
 
 
-Al igual que en el gráfico anterior, este muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que esta variable no fue relevada en el primero.
+Al igual que en el gráfico anterior, la Figura \ref{barwrap} muestra la cantidad de personas en cada nivel educativo, pero de los asalariados. Solo se tienen los datos del segundo año, ya que esta variable no fue relevada en el primero. Se puede ver que la cantidad de asalariados es mucho menor en las cooperativas, dada su naturaleza organizativa y ademas que hay una mayor prevalencia de personas con educación terciaria como asalariados en las cooperativas y con educación secundaria en las empresas.
 
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
@@ -272,14 +281,14 @@ A la hora del análisis tenemos que tener en cuenta que hay años donde iniciaro
 
 
 
-En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de empresas que innovaron según año y categoría de innovación, pero sin dividir en cooperativas y empresas convencionales. Con la excepción de la Figura \ref{refi}, que muestra la proporción de innovación en el área producto, parecería que las cooperativas y empresas más nuevas innovaron menos, lo que puede que se haya dado porque están lidiando con sus costos de la inversión y no pueden dedicar tanto a la innovación. En la Figura \ref{serfund2} se pueden comparar las distintas proporciones de organizaciones que si innovaron en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas, pero tiempo antes de que se marque esto hay una gran variabilidad en la proporción de empresas que si innovaron.  
+En el anexo están disponibles los gráficos realizados inicialmente, dividiendo la proporción de organizaciones que innovaron según año, categoría de innovación y si son cooperativas o empresas. Resulta menos clara cualquier patrón que este presente con esta división. En la Figura \ref{serfund2} se pueden comparar las distintas proporciones de organizaciones que si innovaron en los 3 años anteriores a la encuesta según el año en el que las organizaciones fueron fundadas. Parecería que hay una tendencia de que las empresas convencionales más nuevas han innovado menos en las cuatro áreas, pero tiempo antes de que se marque esto hay una gran variabilidad en la proporción de empresas que si innovaron.  
 
 
 4.  ¿Colaboran más las cooperativas de trabajo con organizaciones similares que las cooperativas de producción? 
 
-Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas los datos son NA, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. Estas se diferencia en que la primera cuenta con un número de asalariados superior al 20% según la clasificación usada en el informe de la encuesta. La colaboración preguntada en la entrevista es en la forma de empresas socias, proveedoras y clientas que también son cooperativas.
+Queriamos ver si entre las cooperativas y las empresas convencionales hay diferencias en cuanto al nivel de colaboración con cooperativas, pero en el caso de todas las empresas la información no fue relevada, por lo que decidimos comparar entre cooperativas de producción y cooperativas de trabajo. Estas se diferencia en que la primera cuenta con un número de asalariados superior al 20% según la clasificación usada en el informe de la encuesta. La colaboración preguntada en la entrevista es en la forma de empresas socias, proveedoras y clientas que también son cooperativas.
 
-```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores, clientes y socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)"}
+```{r, fig.cap = "Gráfico de barras, cantidad de cooperativas según cuántas cooperativas figuran entre sus proveedores, clientes y socios. Dividido en cooperativas de producción (CP) y cooperativas de trabajo (CT)\\label{colab}"}
 
 #ver outliers
 
@@ -309,7 +318,7 @@ gen_ocup %>%
 
 ```
 
-Resalta como hay un gran número de cooperativas que no colaboran con sus pares. También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son: 
+Resalta como hay un gran número de cooperativas que no colaboran con sus pares (Figura \ref{colab}). También son notorios valores atípicos de cooperativas que colaboran con más de quince de sus pares. Son cinco cooperativas de producción y una de trabajadores, todas fundadas despues del año 2002 y con una cantidad de personal bastante pequeña (la que tiene más cuenta con 21 personas). Las ramas de actividades de estas cooperativas son: 
 
 * Impresión de diarios y revistas (una cooperativa)
 
@@ -345,7 +354,7 @@ En la Figura \ref{aus} se aprecia una correspondencia entre aquellos que se repo
 
 A los encuestados se les preguntó como percibían a su cooperativa en distintas áreas en comparación a empresas de similar tamaño. Queremos ver como se correlacionan los desempeños en dichas áreas. 
 
-```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en capacitación de personal, año 2010"}
+```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en capacitación de personal, año 2010\\label{hm1}"}
 dat_7 <- datos %>%
   select(form, año, g11, g12, g13, g14, g15) 
 
@@ -364,7 +373,7 @@ dat_7 %>%
 
 
 
-```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en maquinaria y equipos, año 2010"}
+```{r, fig.cap = "Mapa de calor, situación de las cooperativas respecto a pares en cuanto a capacidad de producción según su situación en maquinaria y equipos, año 2010\\label{hm2}"}
 dat_7 <- datos %>%
   select(form, año, g11, g12, g13, g14, g15) 
 
@@ -382,12 +391,12 @@ dat_7 %>%
 ```
 
 
-Se puede ver que no hay cooperativas cuya situación en capacitación de personal en comparación a empresas pares sea mucho peor y que además su capacidad de producción sea mucho mejor. La mayoría de las empresas que se consideran en igualdad de condiciones en un área se considera en la misma situación en la otra área. Algo similar pasa cuando cruzamos las variables de situación en maquinaria y equipos y capacidad de producción.  
+Se puede ver que no hay cooperativas cuya situación en capacitación de personal en comparación a empresas pares sea mucho peor y que además su capacidad de producción sea mucho mejor (Figura \ref{hm1}). La mayoría de las empresas que se consideran en igualdad de condiciones en un área se considera en la misma situación en la otra área. Algo similar pasa cuando cruzamos las variables de situación en maquinaria y equipos y capacidad de producción (Figura \ref{hm2}).  
 
 
 7. Relación entre monto de la inversión y el resultado
 
-```{r, fig.cap = "Gráfico de cajas, distribución de las inversiones en los últimos 3 años de empresas y cooperativas según el resultado de la misma"}
+```{r, fig.cap = "Gráfico de cajas, distribución de las inversiones en los últimos 3 años de empresas y cooperativas según el resultado de la misma\\label{box}"}
 datos %>%
   select(cp, form, año, g31:g31resul) %>%
   mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
@@ -401,8 +410,7 @@ datos %>%
   labs(x = "Resultado de la inversión", y = "Monto de la inversión (escala log10)")
 ```
 
-
-Ninguna empresa o cooperativa reporto resultados muy malos en sus inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
+Según los resultados expresados en la Figura \ref{box}, ninguna empresa o cooperativa reportó resultados muy malos en sus inversiones. Entre las empresas solo hay una que tuvo resultados malos. En el caso de las empresas aquellas que obtuvieron resultados muy buenos tienen una dispersión mayor de los valores que invirtieron. Las cooperativas la dispersión de los valores de inversión que tuvieron resultados buenos es mayor a la de las empresas convencionales. Especialmente para las empresas es notorio que los mejores resultados se corresponden con algunas de las mayores inversiones. Como el resultado no es medido de manera cuantitativa hay también un sesgo de aquello que es considerado como bueno o malo por el encuestado.
 
 
 8. ¿Las organizaciones que invierten más tienen más ingresos?
@@ -433,7 +441,9 @@ Para las cooperativas los datos resultan escasos para afirmar una relación entr
 
 # Descripción de la aplicación Shiny
 
-En nuestra aplicación queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área de el funcionamiento de la actividad económica de la cooperativa según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
+En [nuestra aplicación](maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/)[^6] queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área de el funcionamiento de la actividad económica de la cooperativa según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
+
+[^6]: <https://maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/>
 
 # Comentarios finales
 
@@ -502,9 +512,11 @@ Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un 
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en producto en los últimos 3 años según año de inicio de sus actividades\\label{refi}"}
 inno_arr %>% 
-  filter(a4 > 1975) %>%
+  filter(a4 > 1975) %>% 
+  mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa Convencional")) %>% 
   ggplot() +
-   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4prod)), position = "fill") +
+   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4prod)), position = "fill") + 
+  facet_wrap(vars(cp)) +
    scale_fill_discrete(labels = c("Si", "No" )) +
    labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en producto?") +
    theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
@@ -515,8 +527,10 @@ inno_arr %>%
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en proceso los últimos 3 años según año de inicio de sus actividades"}
 inno_arr %>% 
   filter(a4 > 1975) %>%
+  mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa Convencional")) %>%
 ggplot() +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4proc)), position = "fill") +
+  facet_wrap(vars(cp)) +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en proceso?") +
    theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
@@ -525,9 +539,11 @@ ggplot() +
 
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en organización en los últimos 3 años según año de inicio de sus actividades"}
 inno_arr %>% 
-  filter(a4 >1975) %>%
+  filter(a4 >1975) %>% 
+  mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa Convencional")) %>%
 ggplot() +
   geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4org)), position = "fill") +
+  facet_wrap(vars(cp)) +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en organización?") +
    theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
@@ -538,8 +554,10 @@ ggplot() +
 ```{r, fig.cap = "Gráfico de barras, proporción de organizaciones que realizaron al menos una innovación en comercialización en los últimos 3 años según año de inicio de sus actividades"}
 inno_arr %>% 
   filter(a4 >1975) %>%
+  mutate(cp = recode(cp, `1` = "Cooperativa", `0` = "Empresa Convencional")) %>%
 ggplot() +
-  geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4com)), position = "fill") +
+  geom_bar(aes(as.factor(year(a4)), fill = as.factor(g4com)), position = "fill") + 
+  facet_wrap(vars(cp)) +
   scale_fill_discrete(labels = c("Si", "No" )) +
   labs(x = "Año de inicio de actividades", y = "Proporción", fill = "¿Hubo innovación en comercialización?") +
    theme(axis.text.x = element_text(angle = 90), legend.position="bottom") 
