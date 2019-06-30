@@ -223,7 +223,7 @@ gen_ocup %>%
 
 ## ##
 
-```{r, echo= FALSE, fig.cap = "Serie de tiempo, cantidad de ecooperativas fundadas cada año\\label{serfund}"}
+```{r, echo= FALSE, fig.cap = "Serie de tiempo, cantidad de cooperativas fundadas cada año\\label{serfund}"}
 inno_arr <- datos %>%
   select(form, año, cp, a4, g4prod, g4proc, g4org, g4com) %>%
   mutate(a4 = as.Date(a4, format = "%d/%m/%Y")) %>%
