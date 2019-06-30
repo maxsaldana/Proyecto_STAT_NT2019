@@ -203,21 +203,24 @@ gen_ocup %>%
 
 ```{r, echo= FALSE, fig.cap = "Gráfico de barras, cantidad de asalariados según nivel educativo"}
 gen_ocup %>%
-  select(año, b3asal2p:b3asal6tuc) %>%
+  select(cp, año, b3asal2p:b3asal6tuc) %>%
   filter(año == 2) %>% 
-  group_by(año) %>%
+  mutate(cp = recode(cp , `1` = "Cooperativa", `0` = "Empresa convencional")) %>%
+  group_by(cp, año) %>%
   summarise(b3asal2p = sum(b3asal2p, na.rm = T),
             b3asal3si = sum(b3asal3si, na.rm = T),
             b3asal4sc = sum(b3asal4sc, na.rm = T),
             b3asal5tui = sum(b3asal5tui, na.rm = T),
             b3asal6tuc = sum(b3asal6tuc, na.rm = T)) %>%
-  gather("NivelEducativo", "Cantidad", -año) %>%
+  gather("NivelEducativo", "Cantidad", -c(año, cp)) %>%
   mutate(NivelEducativo = recode(NivelEducativo, b3asal2p = "Primaria completa", b3asal3si = "Secundaria incompleta", b3asal4sc = "Secundaria completa", b3asal5tui = "Terciaria incompleta", b3asal6tuc = "Terciaria completa")) %>% 
  ggplot() +
   geom_bar(aes(y = Cantidad, x = NivelEducativo, fill = NivelEducativo), stat = "identity") +
+  facet_wrap(vars(cp), scales = "free") +
+  coord_flip() +
    theme(axis.text.x = element_text(vjust = 0.5, size = 8), legend.position = "none") +
-  labs(x = "Cantidad", y = "Nivel Educativo", colour = "Nivel Educativo") +
-  scale_fill_brewer(palette = "Set1")
+  labs(y = "Cantidad", x = "Nivel Educativo", colour = "Nivel Educativo") +
+  scale_fill_brewer(palette = "Set1") 
 ```
 
 
