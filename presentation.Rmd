@@ -66,12 +66,13 @@ TraDej <- datos %>%
   select(año, b14a35soc:b14atot)
 
 ```
+## Objetivo
+
+Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables, ya sean cuantitativas o cualitativas, que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica.
 
 ## Encuesta
 
 -La base de datos utilizada fue obtenida de la Encuesta a Cooperativas de Producción , llevada a cabo por el IECON en los años 2010 y 2011.
-
--Nos interesaba conocer sobre los aspectos cuantitativos y cualitativos del funcionamiento de cooperativas de trabajadores en Uruguay. 
 
 -A su vez, la ECP también encuestó a empresas convencionales. 
 
@@ -81,13 +82,13 @@ TraDej <- datos %>%
 
 -Se encuestaron a 365 empresas dentro de las cuales había 193 cooperativas y 172 empresas convencionales. 
 
--Gracias a Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, que nos suministró de los cuestionarios y el informe de la misma, pudimos comprender el transfondo de la investigación y el significado de los datos.
-
 -Los datos cuentan tanto con variables cualitativas como cuantitativas. 
 
 -En las cualitativas hay un énfasis en como los encuestados ven a sus cooperativas/empresas. 
 
 -En las cuantitativas se reflejan valores numéricos (por ejemplo: montos de inversión).
+
+-Gracias a Andrés Dean, quien formó parte del equipo que trabajó en la encuesta, que nos suministró de los cuestionarios y el informe de la misma, pudimos comprender el transfondo de la investigación y el significado de los datos.
 
 ## Problemas
 
@@ -98,10 +99,6 @@ TraDej <- datos %>%
 -Las preguntas de la base de datos original se dividían en 693 variables, muchas representando observaciones de una variable y que organizamos como tal para trabajar con ellas. 
 
 -En el anexo está disponible el listado de todas las variables que inicialmente seleccionamos de la base de datos.
-
-## Objetivo
-
-Nuestra intención es utilizar estos datos para indagar en el funcionamiento de las cooperativas y empresas en cuestión, ver diferencias entre ellas y buscar correlaciones  entre algunas de las variables que las describen. El análisis de estas formas distintas de organizar el trabajo nos puede ayudar a entenderlas desde un punto de vista basado en evidencia empírica.
 
 ## ##
 
