@@ -182,7 +182,7 @@ gen_ocup %>%
 ```
 
 
-La única categoría de la Figura \ref{bartrab} donde los asalariado superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
+La única categoría de la Figura \ref{bartrab} donde los asalariados superan número a los socios es en el área administración. Tanto los obreros calificados, los no calificados y los profesionales técnicos que son socios superan ampliamente a los que son asalariados. 
 
 
 ```{r, fig.cap = "Gráfico de barras, cantidad de socios según nivel educativo\\label{bared}"}
@@ -236,7 +236,7 @@ Al igual que en el gráfico anterior, la Figura \ref{barwrap} muestra la cantida
 
 3. Tendencia a la innovación según la antiguedad de la cooperativa
 
-La innovación está dividida en cuatro áreas : en producto, en proceso, en organización y en comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente innovarían menos porque están recien estableciéndose y no pueden invertir tanto en dicha área.   
+La innovación está dividida en cuatro áreas: producto, proceso, organización y comercialización. Los encuestados debían responder si había habido en los últimos 3 años alguna innovación en dichas áreas. Inicialmente pensamos que aquellas cooperativas cuya actividad inicial comenzó más recientemente innovarían menos porque están recien estableciéndose y no pueden invertir tanto en dicha área.   
 
 ```{r, fig.cap = "Serie de tiempo, cantidad de ecooperativas fundadas cada año\\label{serfund}"}
 inno_arr <- datos %>%
@@ -441,16 +441,16 @@ Para las cooperativas los datos resultan escasos para afirmar una relación entr
 
 # Descripción de la aplicación Shiny
 
-En [nuestra aplicación](maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/)[^6] queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área de el funcionamiento de la actividad económica de la cooperativa según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
+En [nuestra aplicación](maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/)[^5] queremos expandir sobre la pregunta 6 de nuestro análisis exploratorio, haciendo posible elegir las variables de un mapa de calor donde se muestra el desempeño en un área de el funcionamiento de la actividad económica de la cooperativa según el de otra. Se muestra la proporción de cooperativas en cada uno de los cuadrantes que cruzan los niveles de desempeño (mucho peor, peor, igual, mejor, mucho mejor) en comparación a empresas de similar tamaño.
 
-[^6]: <https://maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/>
+[^5]: <https://maximilianosaldana.shinyapps.io/proy_burgoa_deleon_saldana/>
 
 # Comentarios finales
 
 Si bien no pudimos ahondar del todo en la base de datos dada su cantidad de variables,  pudimos tener dar una mirada a características de las cooperativas y como se comparan con las empresas convencional en algunas áreas. Exploramos algunas características de quienes forman parte de la cooperativa (tanto como socios o asalariados) y además de los encuestados para ver desde que posición daban su información y como alguna de sus características podría sesgar los datos. También evaluamos a las cooperativas en áreas como la innovación, su colaboración con otras cooperativas y su desempeño en cuanto a inversión e ingresos. 
 
 
-Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. Como el número de empresas y cooperativas con más antigüedad es bajo y esto no nos permite hacer comparaciones entre empresas con una diferencia de muchos años de su inicio de actividades. Los datos muestran que hay cierta tendencia de que dentro de als cooperativas activas posteriormente al año 1975 las cooperativas más nuevas no innovan tanto como las más antiguas.  Cuando analizamos la proporción de encuestados que reportaba el ausentismo como un problema en sus cooperativas vinculado a su nivel de impaciencia nos pareció interesante encontrar que dicha proporción era mayor para los niveles más bajo y más altos de paciencia. Por último, observamos que un mayor monto de inversión no se correlacionó claramente con un mayor monto de ingresos. 
+Un hallazgo interesante fue el hecho de que luego de la crisis del 2002 hubo un crecimiento sostenido en el número de cooperativas que iniciaron sus actividades, que se puede relacionar con el crecimiento económico de este período. Puede que haya otros factores que hayan influido en esto, como un aumento en la preferencia por el sistema de organización en cooperativas. Como el número de empresas y cooperativas con más antigüedad es bajo y esto no nos permite hacer comparaciones entre empresas con una diferencia de muchos años de su inicio de actividades. Los datos muestran que hay cierta tendencia de que dentro de las empreses activas posteriormente al año 1975 las más nuevas no innovan tanto como las más antiguas.  Cuando analizamos la proporción de encuestados que reportaba el ausentismo como un problema en sus cooperativas vinculado a su nivel de impaciencia nos pareció interesante encontrar que dicha proporción era mayor para los niveles más bajo y más altos de paciencia. Por último, observamos que un mayor monto de inversión no se correlacionó claramente con un mayor monto de ingresos. 
 
 # Anexo
 
